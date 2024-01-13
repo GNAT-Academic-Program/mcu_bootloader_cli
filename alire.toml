@@ -1,0 +1,9 @@
+name = "mcu_cli"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Joseph Smith"]
+maintainers = ["Joseph Smith <josephsmith8101@gmail.com>"]
+maintainers-logins = ["Jas8101"]
+
+executables = ["mcu_cli"]
