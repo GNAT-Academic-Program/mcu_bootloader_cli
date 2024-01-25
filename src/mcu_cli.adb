@@ -21,7 +21,7 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, delete, help);
+   type Arguments is (info, flash, delete, help, quit);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
@@ -34,11 +34,11 @@ procedure CLI is
 begin
    --When there are no arguments some information on the app such as commands and version will be displayed
    if COM.Argument_Count = 0 then
-      IO.Put_Line("Enter loop");
       Delimiter := To_Set (' ');
       loop
          -- Enter main CLI loop here
          -- arg is the string
+         IO.Put("> "); 
          arg := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
 
          -- change to lowercase
@@ -55,9 +55,10 @@ begin
             Command_Arg := Arguments'Value (To_String (Command));
             case Command_Arg is
                when help => Help_Page.Test;
-               when info => Help_Page.Test;
-               when flash => Help_Page.Test;
-               when delete => Help_Page.Test;
+               when info => IO.Put_Line(system_info.board_info(sub_cmd, sub_cmd_ind));
+               when flash => IO.Put_Line(flash_program.flash_at(sub_cmd, sub_cmd_ind));
+               when delete => IO.Put_Line(delete_program.delete_at);
+               when quit => exit;
             end case;
          exception
             when Constraint_Error => IO.Put_Line("command not found"); 
@@ -79,6 +80,7 @@ begin
                   when flash => IO.Put_Line(flash_program.flash_at(sub_cmd, sub_cmd_ind));
                   when delete => IO.Put_Line(delete_program.delete_at);
                   when help => Help_Page.Test;
+                  when quit => exit;
                end case;
             
             exception
