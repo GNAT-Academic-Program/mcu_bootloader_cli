@@ -13,6 +13,7 @@ with system_info;
 with flash_program;
 with delete_program;
 with utilities_cli; use utilities_cli;
+with Help_Page; use Help_Page;
 
 with cli_types; 
 procedure CLI is
@@ -20,11 +21,12 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, delete);
+   type Arguments is (info, flash, delete, help);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
    Command : Unbounded_String;
+   Command_Arg : Arguments;
    Remainder : Unbounded_String;
 
    sub_cmd : cli_types.subCommands;
@@ -47,6 +49,20 @@ begin
          -- print test
          --  Ada.Text_IO.Unbounded_IO.Put_Line(Command);
          --  Ada.Text_IO.Unbounded_IO.Put_Line(Remainder);
+         Ada.Strings.Unbounded.Translate(Command, Ada.Strings.Maps.Constants.Lower_Case_Map);
+
+         begin
+            Command_Arg := Arguments'Value (To_String (Command));
+            case Command_Arg is
+               when help => Help_Page.Test;
+               when info => Help_Page.Test;
+               when flash => Help_Page.Test;
+               when delete => Help_Page.Test;
+            end case;
+         exception
+            when Constraint_Error => IO.Put_Line("command not found"); 
+         end;
+
       end loop;
    --here the arguments are going to be parsed 
    else
@@ -62,6 +78,7 @@ begin
                   when info => IO.Put_Line(system_info.board_info(sub_cmd, sub_cmd_ind));
                   when flash => IO.Put_Line(flash_program.flash_at(sub_cmd, sub_cmd_ind));
                   when delete => IO.Put_Line(delete_program.delete_at);
+                  when help => Help_Page.Test;
                end case;
             
             exception
