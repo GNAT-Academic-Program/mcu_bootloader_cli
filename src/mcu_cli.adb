@@ -55,7 +55,7 @@ begin
             Command_Arg := Arguments'Value (To_String (Command));
             case Command_Arg is
                when help => Help_Page.Test;
-               when info => IO.Put_Line(system_info.board_info(sub_cmd, sub_cmd_ind));
+               when info => utilities_cli.parse_subcommands(Remainder);
                when flash => IO.Put_Line(flash_program.flash_at(sub_cmd, sub_cmd_ind));
                when delete => IO.Put_Line(delete_program.delete_at);
                when quit => exit;
@@ -76,7 +76,7 @@ begin
             --parses the main command the functions might be functions in here or we could put them in seperate packages its a placehold atm
             begin
                case Arguments'Value(To_String(arg)) is
-                  when info => IO.Put_Line(system_info.board_info(sub_cmd, sub_cmd_ind));
+                  when info => Help_Page.Test;
                   when flash => IO.Put_Line(flash_program.flash_at(sub_cmd, sub_cmd_ind));
                   when delete => IO.Put_Line(delete_program.delete_at);
                   when help => Help_Page.Test;

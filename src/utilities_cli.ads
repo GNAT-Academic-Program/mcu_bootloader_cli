@@ -5,4 +5,6 @@ package utilities_cli is
                                       Delimiter : Character_Set;
                                       Command : out Unbounded_String;
                                       Remainder : out Unbounded_String);
+
+    procedure parse_subcommands (subcommands : Unbounded_String);
 end utilities_cli;
