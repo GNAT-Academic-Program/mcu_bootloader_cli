@@ -1,4 +1,4 @@
 --these are complete dummy functions 
 package delete_program is
-    function delete_at return String;
+    procedure Test;
 end delete_program;

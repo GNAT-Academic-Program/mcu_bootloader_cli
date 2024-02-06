@@ -1,7 +1,8 @@
---these are complete dummy functions 
+with Ada.Text_IO; use Ada.Text_IO;
+
 package body delete_program is
-    function delete_at return String is
+    procedure Test is 
     begin
-        return "Delete Called";
-    end delete_at;
+        Put_Line("Delete command placeholder");
+    end Test;
 end delete_program;

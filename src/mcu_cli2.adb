@@ -13,7 +13,7 @@ with system_info;
 with flash_program;
 with delete_program;
 with utilities_cli; use utilities_cli;
-with help_page; use help_page;
+with Help_Page; use Help_Page;
 
 with cli_types; 
 procedure CLI is
@@ -52,17 +52,14 @@ begin
       begin
          Command_Arg := Arguments'Value (To_String (Command));
          case Command_Arg is
-            when help => help_page.main_page;
-            when info => system_info.Test;
-            when flash => flash_program.Test;
-            when delete => delete_program.Test;
+            when help => Help_Page.Test;
+            when info => utilities_cli.parse_subcommands(Remainder);
+            when flash => IO.Put_Line(flash_program.flash_at(sub_cmd, sub_cmd_ind));
+            when delete => IO.Put_Line(delete_program.delete_at);
             when quit => exit;
          end case;
       exception
          when Constraint_Error => IO.Put_Line("command not found"); 
       end;
-      IO.Put_Line("");
-      IO.Put_Line("Detected sub commands: ");
-      utilities_cli.parse_subcommands(Remainder);
    end loop;
 end CLI;

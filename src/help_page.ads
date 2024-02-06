@@ -1,3 +1,3 @@
-package Help_Page is
-    procedure Test;
-end Help_Page;
+package help_page is
+    procedure main_page;
+end help_page;
