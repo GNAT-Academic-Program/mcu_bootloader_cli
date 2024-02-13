@@ -11,4 +11,6 @@ package utilities_cli is
                                       Remainder : out Unbounded_String);
 
     function parse_subcommands (subcommands : Unbounded_String) return Subcommand_Vector.Vector;
+
+    procedure Clear_Screen;
 end utilities_cli;

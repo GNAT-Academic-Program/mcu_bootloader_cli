@@ -50,4 +50,18 @@ package body utilities_cli is
             return subcommand_list;
     end parse_subcommands;
 
+    procedure Clear_Screen is
+        Control_Preamble : constant Character := Character'Val (8#33#);
+        Clear_Screen_Code: constant String    := "[2J";
+        Home_Cursor_Code : constant String    := "[;H";
+
+        Clear_Screen_Sequence: constant String
+            := Control_Preamble & Clear_Screen_Code &
+                Control_Preamble & Home_Cursor_Code;
+
+    begin
+        Put (Clear_Screen_Sequence);
+
+    end Clear_Screen;
+
 end utilities_cli;

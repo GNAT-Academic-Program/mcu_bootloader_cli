@@ -21,7 +21,7 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, delete, help, quit);
+   type Arguments is (info, flash, delete, help, clear, quit);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
@@ -57,6 +57,7 @@ begin
             when info => system_info.Test;
             when flash => flash_program.Test;
             when delete => delete_program.Test;
+            when clear => utilities_cli.Clear_Screen;
             when quit => exit;
          end case;
       exception

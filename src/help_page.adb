@@ -2,6 +2,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 with flash_program;
 with Ada.Containers.Indefinite_Hashed_Maps;
+with utilities_cli;
 
 package body help_page is
     procedure main_page is 
@@ -27,7 +28,7 @@ package body help_page is
         Put_line("Displays the manual containing information on commands in the command line interface for the MCU bootloader.");
         Put_Line("");
         Put_line("Parameters:");
-        Put_Line("      add params here"`);
+        Put_Line("      add params here");
         Put_line("");
         -- flash command
         Put_line("---------");
@@ -52,5 +53,6 @@ package body help_page is
                 exit;
             end if;
         end loop;
+        utilities_cli.Clear_Screen;
     end main_page;
 end help_page;
