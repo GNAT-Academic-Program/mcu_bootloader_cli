@@ -29,8 +29,7 @@ procedure CLI is
    Command_Arg : Arguments;
    Remainder : Unbounded_String;
 
-   sub_cmd : cli_types.subCommands;
-   sub_cmd_ind : integer := 1;
+   sub_cmd_list : Subcommand_Vector.Vector;
 begin
    Delimiter := To_Set (' ');
    loop
@@ -48,6 +47,8 @@ begin
       --  Ada.Text_IO.Unbounded_IO.Put_Line(Command);
       --  Ada.Text_IO.Unbounded_IO.Put_Line(Remainder);
       Ada.Strings.Unbounded.Translate(Command, Ada.Strings.Maps.Constants.Lower_Case_Map);
+      -- sub command list
+      sub_cmd_list := utilities_cli.parse_subcommands(Remainder);
 
       begin
          Command_Arg := Arguments'Value (To_String (Command));
@@ -63,6 +64,9 @@ begin
       end;
       IO.Put_Line("");
       IO.Put_Line("Detected sub commands: ");
-      utilities_cli.parse_subcommands(Remainder);
+
+      for sub_cmd of sub_cmd_list loop
+         Ada.Text_IO.Unbounded_IO.Put_Line (sub_cmd);
+      end loop;
    end loop;
 end CLI;

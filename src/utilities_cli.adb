@@ -5,6 +5,7 @@ with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
 with Ada.Containers.Vectors;
 
 package body utilities_cli is
+
     procedure Split_Unbounded_String (Input : Unbounded_String;
                                       Delimiter : Character_Set;
                                       Command : out Unbounded_String;
@@ -25,8 +26,7 @@ package body utilities_cli is
 
     end Split_Unbounded_String;
 
-    procedure parse_subcommands (subcommands : Unbounded_String) is
-        package Subcommand_Vector is new Ada.Containers.Vectors(Index_Type => Natural, Element_Type => Unbounded_String);
+    function parse_subcommands (subcommands : Unbounded_String) return Subcommand_Vector.Vector is
 
         subcommand_list : Subcommand_Vector.Vector;
         inputcommands : Unbounded_String := subcommands;
@@ -44,9 +44,10 @@ package body utilities_cli is
                 inputcommands := Remainder;
             end loop;
             -- test
-            for E of subcommand_list loop
-                Ada.Text_IO.Unbounded_IO.Put_Line (E);
-            end loop;
+            --  for E of subcommand_list loop
+            --      Ada.Text_IO.Unbounded_IO.Put_Line (E);
+            --  end loop;
+            return subcommand_list;
     end parse_subcommands;
 
 end utilities_cli;
