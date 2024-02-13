@@ -10,12 +10,12 @@ package body flash_program is
     begin
         return "Flashes the microcontroller.";
     end description;
-
+    -- indefinite array instead of containers
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
         params.Insert("file", "input binary file to flash from");
-        params.Insert("mode", "Mode to parse the input file in");
+        params.Insert("mode", "mode to parse the input file in");
 
         return params;
     end parameters;

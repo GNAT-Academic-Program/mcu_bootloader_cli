@@ -26,8 +26,8 @@ package body help_page is
         Put_line("");
         Put_line("Displays the manual containing information on commands in the command line interface for the MCU bootloader.");
         Put_Line("");
-        Put_line("Paramters:");
-        Put_Line("      add params here");
+        Put_line("Parameters:");
+        Put_Line("      add params here"`);
         Put_line("");
         -- flash command
         Put_line("---------");
