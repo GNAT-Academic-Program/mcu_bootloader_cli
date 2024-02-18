@@ -14,8 +14,6 @@ with flash_program;
 with delete_program;
 with utilities_cli; use utilities_cli;
 with help_page; use help_page;
-
-with cli_types; 
 procedure CLI is
    package COM renames Ada.Command_Line;
    package IO renames Ada.Text_IO;
@@ -29,7 +27,7 @@ procedure CLI is
    Command_Arg : Arguments;
    Remainder : Unbounded_String;
 
-   sub_cmd : cli_types.subCommands;
+   sub_cmd : subCommands;
    sub_cmd_ind : integer := 1;
 begin
    Delimiter := To_Set (' ');
@@ -53,9 +51,9 @@ begin
          Command_Arg := Arguments'Value (To_String (Command));
          case Command_Arg is
             when help => help_page.main_page;
-            when info => system_info.Test;
-            when flash => flash_program.Test;
-            when delete => delete_program.Test;
+            when info => system_info.board_info;
+            when flash => flash_program.flash_board;
+            when delete => delete_program.delete_board;
             when quit => exit;
          end case;
       exception
