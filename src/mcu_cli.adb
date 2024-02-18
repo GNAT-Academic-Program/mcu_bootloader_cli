@@ -19,7 +19,7 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, delete, help, quit);
+   type Arguments is (info, flash, delete, help, clear, quit);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
@@ -27,8 +27,7 @@ procedure CLI is
    Command_Arg : Arguments;
    Remainder : Unbounded_String;
 
-   sub_cmd : subCommands;
-   sub_cmd_ind : integer := 1;
+   sub_cmd_list : Subcommand_Vector.Vector;
 begin
    Delimiter := To_Set (' ');
    loop
@@ -46,6 +45,8 @@ begin
       --  Ada.Text_IO.Unbounded_IO.Put_Line(Command);
       --  Ada.Text_IO.Unbounded_IO.Put_Line(Remainder);
       Ada.Strings.Unbounded.Translate(Command, Ada.Strings.Maps.Constants.Lower_Case_Map);
+      -- sub command list
+      sub_cmd_list := utilities_cli.parse_subcommands(Remainder);
 
       begin
          Command_Arg := Arguments'Value (To_String (Command));
@@ -54,6 +55,7 @@ begin
             when info => system_info.board_info;
             when flash => flash_program.flash_board;
             when delete => delete_program.delete_board;
+            when clear => utilities_cli.Clear_Screen;
             when quit => exit;
          end case;
       exception
@@ -61,6 +63,9 @@ begin
       end;
       IO.Put_Line("");
       IO.Put_Line("Detected sub commands: ");
-      utilities_cli.parse_subcommands(Remainder);
+
+      for sub_cmd of sub_cmd_list loop
+         Ada.Text_IO.Unbounded_IO.Put_Line (sub_cmd);
+      end loop;
    end loop;
 end CLI;
