@@ -23,7 +23,6 @@ package Serial renames GNAT.Serial_Communications;
         --set the packet to send the first is the command code the second byte is the length
         --length represents length of package AFTER the command code every packet has a command code
         O_Buffer(1) := Ada.Streams.Stream_Element(flash_number);
-        O_Buffer(2) := 16#00#;
 
         --the O_Buffer will be filled with the bytes of the program to be flashed 
         --we may have to change this function to recursive to send multiple messages
