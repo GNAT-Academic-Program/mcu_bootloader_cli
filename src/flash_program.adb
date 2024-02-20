@@ -8,7 +8,7 @@ package body flash_program is
 
     function description return String is
     begin
-        return "Flashes the microcontroller.";
+        return "Flash description";
     end description;
     -- indefinite array instead of containers
     function parameters return param_map.Map is
