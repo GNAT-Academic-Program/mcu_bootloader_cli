@@ -26,13 +26,13 @@ package Serial renames GNAT.Serial_Communications;
 
         --the O_Buffer will be filled with the bytes of the program to be flashed 
         --we may have to change this function to recursive to send multiple messages
-        S_Port.Write(O_Buffer);
-
-        S_Port.Read(Buffer => I_Buffer, Last => I_Offset);
-
-        for i in 1..Integer(I_Size) loop
-            IO.Put(I_Buffer(Ada.Streams.Stream_Element_Offset(i))'Image);
-        end loop;
+        --S_Port.Write(O_Buffer);
+--
+        --S_Port.Read(Buffer => I_Buffer, Last => I_Offset);
+--
+        --for i in 1..Integer(I_Size) loop
+        --    IO.Put(I_Buffer(Ada.Streams.Stream_Element_Offset(i))'Image);
+        --end loop;
 
     end flash_board;
 

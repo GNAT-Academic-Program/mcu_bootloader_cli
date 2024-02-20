@@ -64,4 +64,66 @@ package body utilities_cli is
 
     end Clear_Screen;
 
+    function To_Hex_Digit (Value : Uint4) return Character is
+    begin
+       case Value is
+          when 0 => return '0';
+          when 1 => return '1';
+          when 2 => return '2';
+          when 3 => return '3';
+          when 4 => return '4';
+          when 5 => return '5';
+          when 6 => return '6';
+          when 7 => return '7';
+          when 8 => return '8';
+          when 9 => return '9';
+          when 10 => return 'A';
+          when 11 => return 'B';
+          when 12 => return 'C';
+          when 13 => return 'D';
+          when 14 => return 'E';
+          when 15 => return 'F';
+       end case;
+    end To_Hex_Digit;
+
+    procedure To_Hex (Value : UInt12;
+                            Hex_String : in out String) is
+    begin
+       Hex_String (Hex_String'First) :=
+          To_Hex_Digit (UInt4 (Value / 256));
+       Hex_String (Hex_String'First + 1) :=
+          To_Hex_Digit (UInt4 (Value mod 256 / 16));
+       Hex_String (Hex_String'First + 2) :=
+          To_Hex_Digit (UInt4 (Value mod 16));
+    end To_Hex;
+
+    procedure To_Hex (Value : UInt16;
+                            Hex_String : in out String) is
+    begin
+       Hex_String (Hex_String'First) :=
+          To_Hex_Digit (UInt4 (Value / 4096));
+       Hex_String (Hex_String'First + 1) :=
+          To_Hex_Digit (UInt4 (Value mod 4096 / 256));
+       Hex_String (Hex_String'First + 2) :=
+          To_Hex_Digit (UInt4 (Value mod 256 / 16));
+       Hex_String (Hex_String'First + 3) :=
+          To_Hex_Digit (UInt4 (Value mod 16));
+    end To_Hex;
+
+    -- takes two bytes and converts it into a single unsigned 12 bit integer
+    function To_UInt12 (Val : byteArr) return UInt12 is
+        Combined : Uint12;
+    begin
+        Combined := Uint12(Val(1)) * 256 + UInt12(Val(2));
+
+        return Combined;
+    end To_Uint12;
+
+    function To_UInt16 (Val : byteArr) return UInt16 is
+        Combined : UInt16;
+    begin
+        Combined := UInt16(Val(1))*256 + UInt16(Val(2));
+
+        return Combined;
+    end To_Uint16;
 end utilities_cli;
