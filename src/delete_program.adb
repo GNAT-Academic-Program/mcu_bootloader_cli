@@ -42,8 +42,8 @@ package body delete_program is
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
-        params.Insert("param1", "param1 description");
-        params.Insert("param2", "param2 description");
+        params.Insert("mode", "param1 description");
+        params.Insert("file", "param2 description");
 
         return params;
     end parameters;

@@ -1,6 +1,7 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Strings.Maps; use Ada.Strings.Maps;
 with Ada.Containers.Vectors;
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 --with Interfaces; use Interfaces;
 
 package utilities_cli is
@@ -15,6 +16,14 @@ package utilities_cli is
     info_number : constant UInt8 := 16#07#;
     flash_number : constant UInt8 := 16#01#;
     delete_number : constant UInt8 := 16#02#;
+
+    -- ANSI Escape Codes
+    bold : constant String := Ada.Characters.Latin_1.ESC & "[1m";
+    blink : constant String := Ada.Characters.Latin_1.ESC & "[5m";
+    unblink : constant String := Ada.Characters.Latin_1.ESC & "[25m";
+    unbold : constant String := Ada.Characters.Latin_1.ESC & "[22m";
+    resetmodes : constant String := Ada.Characters.Latin_1.ESC & "[0m";
+    redforeground : constant String := Ada.Characters.Latin_1.ESC & "[31m";
     
     package Subcommand_Vector is new Ada.Containers.Vectors(Index_Type => Natural, Element_Type => Unbounded_String);
 

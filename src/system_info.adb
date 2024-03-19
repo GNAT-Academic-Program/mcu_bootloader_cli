@@ -35,7 +35,7 @@ package Serial renames GNAT.Serial_Communications;
 
         if Integer(I_Offset) < Integer(I_Size) then
             IO.Put_Line("");
-            IO.Put_Line("Data not recieved from board");
+            IO.Put_Line("Data not received from board");
             return;
         end if;
 
@@ -62,8 +62,7 @@ package Serial renames GNAT.Serial_Communications;
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
-        params.Insert("param1", "param1 description");
-        params.Insert("param2", "param2 description");
+        params.Insert("NULL", "");
 
         return params;
     end parameters;

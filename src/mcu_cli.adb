@@ -4,6 +4,7 @@ with Ada.Strings.Maps.Constants; use Ada.Strings.Unbounded;
 with Ada.Strings.Maps; use Ada.Strings.Maps;
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
+with Ada.Containers.Vectors;
 
 --The Command_Line library lets you get the commands added after starting the program extremely easily
 with Ada.Command_Line;
@@ -27,13 +28,13 @@ procedure CLI is
    Command_Arg : Arguments;
    Remainder : Unbounded_String;
 
-   sub_cmd_list : Subcommand_Vector.Vector;
+   sub_cmd_list : utilities_cli.Subcommand_Vector.Vector;
 begin
    Delimiter := To_Set (' ');
    loop
       -- Enter main CLI loop here
       -- arg is the string
-      IO.Put("> "); 
+      IO.Put(utilities_cli.redforeground & "user" & utilities_cli.resetmodes & " > "); 
       arg := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
 
       -- change to lowercase
@@ -51,7 +52,7 @@ begin
       begin
          Command_Arg := Arguments'Value (To_String (Command));
          case Command_Arg is
-            when help => help_page.main_page;
+            when help => help_page.parse_sub_command(sub_cmd_list);
             when info => system_info.board_info;
             when flash => flash_program.flash_board;
             when delete => delete_program.delete_board;
@@ -62,10 +63,10 @@ begin
          when Constraint_Error => IO.Put_Line("command not found"); 
       end;
       IO.Put_Line("");
-      IO.Put_Line("Detected sub commands: ");
+      --  IO.Put_Line("Detected sub commands: ");
 
-      for sub_cmd of sub_cmd_list loop
-         Ada.Text_IO.Unbounded_IO.Put_Line (sub_cmd);
-      end loop;
+      --  for sub_cmd of sub_cmd_list loop
+      --     Ada.Text_IO.Unbounded_IO.Put_Line (sub_cmd);
+      --  end loop;
    end loop;
 end CLI;
