@@ -3,7 +3,7 @@ with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 with flash_program;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with utilities_cli;
-with delete_program;
+with erase_program;
 with verify_program;
 with system_info;
 with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
@@ -22,8 +22,8 @@ package body help_page is
                 info_page;
             elsif (sub_cmd = "flash" or sub_cmd = "3") then
                 flash_page;
-            elsif (sub_cmd = "delete" or sub_cmd = "4") then
-                delete_page;
+            elsif (sub_cmd = "erase" or sub_cmd = "4") then
+                erase_page;
             elsif (sub_cmd = "clear" or sub_cmd = "5") then
                 clear_page;
             elsif (sub_cmd = "help" or sub_cmd = "1") then
@@ -95,7 +95,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "flash" & utilities_cli.unbold & " [address][file][mode]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "flash" & utilities_cli.unbold & " [file][address][mode]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
@@ -125,33 +125,33 @@ package body help_page is
         end loop;
     end flash_page;
 
-    procedure delete_page is
+    procedure erase_page is
         Input_Char : Character;
-        deleteParams : delete_program.param_map.Map;
-        deleteCursor : delete_program.param_map.Cursor;
+        eraseParams : erase_program.param_map.Map;
+        eraseCursor : erase_program.param_map.Cursor;
     begin
         -- title of page
-        Put_line("delete (4)");
+        Put_line("erase (4)");
 
         -- name
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "NAME" & utilities_cli.unbold); 
-        Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "delete" & utilities_cli.unbold & " - deletes an area in memory");
+        Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " - erases an area in memory");
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "delete" & utilities_cli.unbold & " [mode][file]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " [mode][file]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "delete" & utilities_cli.unbold & " " & delete_program.description);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " " & erase_program.description);
 
         -- options
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "OPTIONS" & utilities_cli.unbold);
-        deleteParams := delete_program.parameters;
-        deleteCursor := delete_program.param_map.First(deleteParams);
-        while delete_program.param_map.Has_Element(deleteCursor) loop
-            Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "[" & delete_program.param_map.Key(deleteCursor) & "]" & utilities_cli.unbold & "   " & delete_program.param_map.Element(deleteCursor));
-            delete_program.param_map.Next(deleteCursor);
+        eraseParams := erase_program.parameters;
+        eraseCursor := erase_program.param_map.First(eraseParams);
+        while erase_program.param_map.Has_Element(eraseCursor) loop
+            Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "[" & erase_program.param_map.Key(eraseCursor) & "]" & utilities_cli.unbold & "   " & erase_program.param_map.Element(eraseCursor));
+            erase_program.param_map.Next(eraseCursor);
         end loop;
 
         -- version history
@@ -166,7 +166,7 @@ package body help_page is
                 exit;
             end if;
         end loop;
-    end delete_page;
+    end erase_page;
 
     procedure verify_page is
         Input_Char : Character;
@@ -182,7 +182,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " [start address][end address][file][mode]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " [file][address][mode]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
@@ -330,7 +330,7 @@ package body help_page is
         Put_line(Ada.Characters.Latin_1.HT & "1. help");
         Put_line(Ada.Characters.Latin_1.HT & "2. info");
         Put_line(Ada.Characters.Latin_1.HT & "3. flash");
-        Put_line(Ada.Characters.Latin_1.HT & "4. delete");
+        Put_line(Ada.Characters.Latin_1.HT & "4. erase");
         Put_line(Ada.Characters.Latin_1.HT & "5. clear");
         Put_line(Ada.Characters.Latin_1.HT & "6. quit");
         Put_line(Ada.Characters.Latin_1.HT & "7. verify");

@@ -15,7 +15,7 @@ package verify_program is
     function description return String;
     function parameters return param_map.Map;
     procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector);
-    procedure verify_handler(start_address : Unbounded_String; end_address : Unbounded_String; file : Unbounded_String; mode : Unbounded_String);
-    procedure default_verify_handler(start_address : in out Unbounded_String; end_address : in out Unbounded_String; file : in out Unbounded_String; mode : in out Unbounded_String);
-    procedure verify(start_address : Unbounded_String; end_address : Unbounded_String; file : Unbounded_String; mode : Unbounded_String);
+    procedure verify_handler(file : Unbounded_String; address : Unbounded_String; mode : Unbounded_String);
+    procedure default_verify_handler(file : in out Unbounded_String; address : in out Unbounded_String; mode : in out Unbounded_String);
+    procedure verify(file : Unbounded_String; address : Unbounded_String; mode : Unbounded_String);
 end verify_program;

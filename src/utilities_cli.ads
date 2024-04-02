@@ -24,6 +24,7 @@ package utilities_cli is
     unbold : constant String := Ada.Characters.Latin_1.ESC & "[22m";
     resetmodes : constant String := Ada.Characters.Latin_1.ESC & "[0m";
     redforeground : constant String := Ada.Characters.Latin_1.ESC & "[31m";
+    greenforeground : constant String := Ada.Characters.Latin_1.ESC & "[32m";
     
     package Subcommand_Vector is new Ada.Containers.Vectors(Index_Type => Natural, Element_Type => Unbounded_String);
 

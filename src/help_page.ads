@@ -8,7 +8,7 @@ package help_page is
     procedure main_page;
     procedure info_page;
     procedure flash_page;
-    procedure delete_page;
+    procedure erase_page;
     procedure clear_page;
     procedure quit_page;
     procedure help_page;

@@ -12,7 +12,7 @@ with Ada.Command_Line;
 --these are our package imports 
 with system_info;
 with flash_program;
-with delete_program;
+with erase_program;
 with verify_program;
 with utilities_cli; use utilities_cli;
 with help_page; use help_page;
@@ -21,7 +21,7 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, delete, help, clear, quit, verify);
+   type Arguments is (info, flash, erase, help, clear, quit, verify);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
@@ -35,7 +35,7 @@ begin
    loop
       -- Enter main CLI loop here
       -- arg is the string
-      IO.Put(utilities_cli.redforeground & "user" & utilities_cli.resetmodes & " > "); 
+      IO.Put(utilities_cli.greenforeground & "user" & utilities_cli.resetmodes & " > "); 
       arg := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
 
       -- change to lowercase
@@ -56,7 +56,7 @@ begin
             when help => help_page.parse_sub_command(sub_cmd_list);
             when info => system_info.board_info;
             when flash => flash_program.parse_sub_command(sub_cmd_list);
-            when delete => delete_program.parse_sub_command(sub_cmd_list);
+            when erase => erase_program.parse_sub_command(sub_cmd_list);
             when verify => verify_program.parse_sub_command(sub_cmd_list);
             when clear => utilities_cli.Clear_Screen;
             when quit => exit;
