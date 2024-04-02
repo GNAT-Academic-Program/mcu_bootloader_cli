@@ -92,7 +92,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "flash" & utilities_cli.unbold & " [mode][file]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "flash" & utilities_cli.unbold & " [address][file][mode]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
@@ -102,6 +102,7 @@ package body help_page is
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "OPTIONS" & utilities_cli.unbold);
         flashParams := flash_program.parameters;
         flashCursor := flash_program.param_map.First(flashParams);
+        -- bugged? not in order
         while flash_program.param_map.Has_Element(flashCursor) loop
             Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "[" & flash_program.param_map.Key(flashCursor) & "]" & utilities_cli.unbold & "   " & flash_program.param_map.Element(flashCursor));
             flash_program.param_map.Next(flashCursor);

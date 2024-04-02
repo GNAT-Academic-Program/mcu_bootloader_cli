@@ -54,7 +54,7 @@ begin
          case Command_Arg is
             when help => help_page.parse_sub_command(sub_cmd_list);
             when info => system_info.board_info;
-            when flash => flash_program.flash_board;
+            when flash => flash_program.parse_sub_command(sub_cmd_list);
             when delete => delete_program.delete_board;
             when clear => utilities_cli.Clear_Screen;
             when quit => exit;

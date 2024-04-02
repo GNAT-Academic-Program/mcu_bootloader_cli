@@ -15,4 +15,5 @@ package delete_program is
     function description return String;
     function parameters return param_map.Map;
     procedure delete_board;
+    procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector);
 end delete_program;

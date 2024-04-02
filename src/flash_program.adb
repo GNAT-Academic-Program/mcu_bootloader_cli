@@ -1,40 +1,75 @@
+with utilities_cli;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
+
 package body flash_program is
 package IO renames Ada.Text_IO;
 package Serial renames GNAT.Serial_Communications;
 
-    procedure flash_board is 
-        O_Size : Ada.Streams.Stream_Element_Offset := 2;
-        O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
-
-        I_Size : Ada.Streams.Stream_Element_Offset := 2;
-        I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
-        I_Offset : Ada.Streams.Stream_Element_Offset;
-
-        S_Port : aliased Serial.Serial_Port;
-
-        Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+    procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector) is
     begin
-        IO.Put_Line("Flash command placeholder");
+        if sub_cmd_list.Element(0) = "" then
+            flash_handler(To_Unbounded_String(""), To_Unbounded_String(""),To_Unbounded_String(""));
+        elsif sub_cmd_list.Length = 1 then
+            IO.Put_Line ("Missing arguments for the flash command. See 'help flash' for required arguments");
+        elsif sub_cmd_list.Length = 2 then
+            flash_handler(sub_cmd_list.Element(0), sub_cmd_list.Element(1), To_Unbounded_String(""));
+        elsif sub_cmd_list.Length = 3 then
+            flash_handler(sub_cmd_list.Element(0), sub_cmd_list.Element(1), sub_cmd_list.Element(2));
+        else
+            IO.Put_Line ("Too many arguments for the flash command. See 'help flash' for required arguments");
+        end if;
+    end parse_sub_command;
 
-        --Opens the port we will communicate over and then set the specifications of the port
-        S_Port.Open(Com_Port);
-        S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
+    procedure default_flash_handler(address : in out Unbounded_String; file : in out Unbounded_String; mode : in out Unbounded_String) is
+    begin
+        IO.Put ("Enter the address of the flash location in hexidecimal format: ");
+        address := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+        IO.Put ("Enter the file path: ");
+        file := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+        IO.Put ("Enter the mode of flash (leave blank for default mode): ");
+        mode := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+    end default_flash_handler;
 
-        --set the packet to send the first is the command code the second byte is the length
-        --length represents length of package AFTER the command code every packet has a command code
-        O_Buffer(1) := Ada.Streams.Stream_Element(flash_number);
+    procedure flash_handler(address : Unbounded_String; file : Unbounded_String; mode : Unbounded_String) is 
+        address_string : Unbounded_String := address;
+        file_string : Unbounded_String := file;
+        mode_type : Unbounded_String := mode;
+    begin
+        if file = "" then
+            -- default flash handler
+            default_flash_handler(address_string, file_string, mode_type);
+            -- user inputted results
+        end if;
+        -- flash program
+        flash(address_string, file_string, mode_type);
+    end flash_handler;
 
-        --the O_Buffer will be filled with the bytes of the program to be flashed 
-        --we may have to change this function to recursive to send multiple messages
-        --S_Port.Write(O_Buffer);
---
-        --S_Port.Read(Buffer => I_Buffer, Last => I_Offset);
---
-        --for i in 1..Integer(I_Size) loop
-        --    IO.Put(I_Buffer(Ada.Streams.Stream_Element_Offset(i))'Image);
-        --end loop;
-
-    end flash_board;
+    procedure flash(address : Unbounded_String; file : Unbounded_String; mode : Unbounded_String) is 
+        address_string : Unbounded_String := address;
+        file_string : Unbounded_String := file;
+        mode_type : Unbounded_String := mode;
+    begin
+        if mode = "" then
+            -- default mode flash here, replace filler code
+            IO.Put_Line("");
+            IO.Put_Line("Flash address: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (address_string);
+            IO.Put_Line("with file: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (file_string);
+            IO.Put_Line("in mode: ");
+            IO.Put_Line ("default mode");
+        else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
+            -- put flash function here, i put a filler code
+            IO.Put_Line("");
+            IO.Put_Line("Flash address: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (address_string);
+            IO.Put_Line("with file: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (file_string);
+            IO.Put_Line("in mode: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (mode_type);
+        end if;
+    end flash;
 
 
     function description return String is
@@ -45,8 +80,9 @@ package Serial renames GNAT.Serial_Communications;
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
-        params.Insert("file", "input binary file to flash from");
+        params.Insert("address", "address in memory to flash");
         params.Insert("mode", "mode to parse the input file in");
+        params.Insert("file", "input binary file to flash from");
 
         return params;
     end parameters;

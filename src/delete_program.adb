@@ -1,7 +1,24 @@
 package body delete_program is
     package IO renames Ada.Text_IO;
     package Serial renames GNAT.Serial_Communications;
+
+    procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector) is
+
+    begin
+        if sub_cmd_list.Element(0) = "" then
+            flash_board(To_Unbounded_String(""),To_Unbounded_String(""));
+        elsif sub_cmd_list.Length = 1 then
+            flash_board(sub_cmd_list.Element(0), To_Unbounded_String("defaultmode"));
+        elsif sub_cmd_list.Length = 2 then
+            flash_board(sub_cmd_list.Element(0), sub_cmd_list.Element(1));
+        else
+            IO.Put_Line("Too many arguments for the flash command, see 'help flash' for available arguments");
+        end if;
+        NULL;
+    end parse_sub_command;
+
     procedure delete_board is 
+
         O_Size : Ada.Streams.Stream_Element_Offset := 2;
         O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
 
