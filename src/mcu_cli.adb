@@ -55,12 +55,12 @@ begin
             when help => help_page.parse_sub_command(sub_cmd_list);
             when info => system_info.board_info;
             when flash => flash_program.parse_sub_command(sub_cmd_list);
-            when delete => delete_program.delete_board;
+            when delete => delete_program.parse_sub_command(sub_cmd_list);
             when clear => utilities_cli.Clear_Screen;
             when quit => exit;
          end case;
       exception
-         when Constraint_Error => IO.Put_Line("command not found"); 
+         when Constraint_Error => IO.Put_Line("Unknown command: " & To_String (Command) & ". Please run " & utilities_cli.bold & "help" & utilities_cli.unbold & " for available commands");
       end;
       IO.Put_Line("");
       --  IO.Put_Line("Detected sub commands: ");

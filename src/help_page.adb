@@ -30,7 +30,7 @@ package body help_page is
             elsif (sub_cmd = "quit" or sub_cmd = "6") then
                 quit_page;
             else
-                Put_Line("Unknown sub command: " & sub_cmd);
+                Put_Line("Unknown sub command: " & sub_cmd & ". Please run " & utilities_cli.bold & "help" & utilities_cli.unbold & " for available commands");
             end if;
         end loop;
     end parse_sub_command;
@@ -69,7 +69,7 @@ package body help_page is
         Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
 
         -- quit command
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then
@@ -113,7 +113,7 @@ package body help_page is
         Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
 
         -- quit command
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then
@@ -156,7 +156,7 @@ package body help_page is
         Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
 
         -- quit command
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then
@@ -192,7 +192,7 @@ package body help_page is
         Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 3/18/2024 written by Xavier Zhang");
 
         -- quit command
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then
@@ -228,7 +228,7 @@ package body help_page is
         Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 3/18/2024 written by Xavier Zhang");
 
         -- quit command
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then
@@ -264,7 +264,7 @@ package body help_page is
         Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 3/18/2024 written by Xavier Zhang");
 
         -- quit command
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then
@@ -288,7 +288,7 @@ package body help_page is
         Put_line(Ada.Characters.Latin_1.HT & "6. quit");
 
         -- quit page
-        Put_Line(Ada.Characters.Latin_1.LF & "Press 'Esc' to exit the help page");
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
         loop
             Ada.Text_IO.Get_Immediate(Input_Char);
             if Input_Char = Ada.Characters.Latin_1.ESC then

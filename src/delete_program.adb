@@ -1,3 +1,8 @@
+with utilities_cli;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
+
 package body delete_program is
     package IO renames Ada.Text_IO;
     package Serial renames GNAT.Serial_Communications;
@@ -6,62 +11,82 @@ package body delete_program is
 
     begin
         if sub_cmd_list.Element(0) = "" then
-            flash_board(To_Unbounded_String(""),To_Unbounded_String(""));
+            delete_handler(To_Unbounded_String(""), To_Unbounded_String(""), To_Unbounded_String(""));
         elsif sub_cmd_list.Length = 1 then
-            flash_board(sub_cmd_list.Element(0), To_Unbounded_String("defaultmode"));
+            IO.Put_Line ("Missing arguments for the delete command. Run " & utilities_cli.bold & "help delete" & utilities_cli.unbold & " for required arguments");
         elsif sub_cmd_list.Length = 2 then
-            flash_board(sub_cmd_list.Element(0), sub_cmd_list.Element(1));
+            delete_handler(sub_cmd_list.Element(0), sub_cmd_list.Element(1), To_Unbounded_String(""));
+        elsif sub_cmd_list.Length = 3 then
+            delete_handler(sub_cmd_list.Element(0), sub_cmd_list.Element(1), sub_cmd_list.Element(2));
         else
-            IO.Put_Line("Too many arguments for the flash command, see 'help flash' for available arguments");
+            IO.Put_Line("Too many arguments for the delete command. Run " & utilities_cli.bold & "help delete" & utilities_cli.unbold & " for required arguments");
         end if;
-        NULL;
     end parse_sub_command;
 
-    procedure delete_board is 
-
-        O_Size : Ada.Streams.Stream_Element_Offset := 2;
-        O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
-
-        I_Size : Ada.Streams.Stream_Element_Offset := 2;
-        I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
-        I_Offset : Ada.Streams.Stream_Element_Offset;
-
-        S_Port : aliased Serial.Serial_Port;
-
-        Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+    procedure default_delete_handler(start_address : in out Unbounded_String; end_address : in out Unbounded_String; mode : in out Unbounded_String) is
     begin
-        Put_Line("Delete command placeholder");
+        IO.Put (Ada.Characters.Latin_1.LF & utilities_cli.bold & "Delete Program" & utilities_cli.unbold & Ada.Characters.Latin_1.LF & Ada.Characters.Latin_1.LF);
+        IO.Put ("Enter the starting address of the delete location in hexidecimal format: ");
+        start_address := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+        IO.Put ("Enter the ending address of the delete location in hexidecimal format: ");
+        end_address := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+        IO.Put ("Enter the mode of delete (leave blank for default mode): ");
+        mode := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+    end default_delete_handler;
 
-        --Opens the port we will communicate over and then set the specifications of the port
-        S_Port.Open(Com_Port);
-        S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
+    procedure delete_handler(start_address : Unbounded_String; end_address : Unbounded_String; mode : Unbounded_String) is 
+        start_address_string : Unbounded_String := start_address;
+        end_address_string : Unbounded_String := end_address;
+        mode_type : Unbounded_String := mode;
+    begin
+        if start_address = "" then
+            -- default delete handler
+            default_delete_handler(start_address_string, end_address_string, mode_type);
+        end if;
+        -- delete program
+        delete(start_address_string, end_address_string, mode_type);
+    end delete_handler;
 
-        --set the packet to send the first is the command code the second byte is the length
-        --length represents length of package AFTER the command code every packet has a command code
-        O_Buffer(1) := Ada.Streams.Stream_Element(delete_number);
-
-        --the O_Buffer will be filled with the bytes of the program to be flashed 
-        --we may have to change this function to recursive to send multiple messages
-        --S_Port.Write(O_Buffer);
---
-        --S_Port.Read(Buffer => I_Buffer, Last => I_Offset);
---
-        --for i in 1..Integer(I_Size) loop
-        --    IO.Put(I_Buffer(Ada.Streams.Stream_Element_Offset(i))'Image);
-        --end loop;
-    end delete_board;
+    procedure delete(start_address : Unbounded_String; end_address : Unbounded_String; mode : Unbounded_String) is 
+        start_address_string : Unbounded_String := start_address;
+        end_address_string : Unbounded_String := end_address;
+        mode_type : Unbounded_String := mode;
+    begin
+        if mode = "" then
+            -- default mode flash here, replace filler code
+            IO.Put_Line("");
+            IO.Put_Line("Deleting memory with starting address: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (start_address_string);
+            IO.Put_Line("and ending address: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (end_address_string);
+            IO.Put_Line("in mode: ");
+            IO.Put_Line ("default mode");
+        else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
+            -- put flash function here, i put a filler code
+            IO.Put_Line("");
+            IO.Put_Line("Deleting memory with starting address: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (start_address_string);
+            IO.Put_Line("and ending address: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (end_address_string);
+            IO.Put_Line("in mode: ");
+            Ada.Text_IO.Unbounded_IO.Put_Line (mode_type);
+        end if;
+    end delete;
 
     function description return String is
     begin
         return "Delete description here";
     end description;
+
     -- indefinite array instead of containers
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
-        params.Insert("mode", "param1 description");
-        params.Insert("file", "param2 description");
+        params.Insert("start address", "The start address in memory to delete.");
+        params.Insert("end address", "The end address in memory to delete");
+        params.Insert("mode", "The mode to run the delete program. Default mode is __");
 
         return params;
     end parameters;
+
 end delete_program;
