@@ -53,23 +53,23 @@ package body delete_program is
         mode_type : Unbounded_String := mode;
     begin
         if mode = "" then
-            -- default mode flash here, replace filler code
-            IO.Put_Line("");
-            IO.Put_Line("Deleting memory with starting address: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (start_address_string);
-            IO.Put_Line("and ending address: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (end_address_string);
-            IO.Put_Line("in mode: ");
-            IO.Put_Line ("default mode");
+            -- default mode delete here, replace filler code
+            IO.Put (Ada.Characters.Latin_1.LF & "Deleting...");
+            IO.Put (Ada.Characters.Latin_1.LF & "Starting address: ");
+            Ada.Text_IO.Unbounded_IO.Put (start_address_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "Ending address: ");
+            Ada.Text_IO.Unbounded_IO.Put (end_address_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
+            IO.Put ("default mode");
         else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
-            -- put flash function here, i put a filler code
-            IO.Put_Line("");
-            IO.Put_Line("Deleting memory with starting address: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (start_address_string);
-            IO.Put_Line("and ending address: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (end_address_string);
-            IO.Put_Line("in mode: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (mode_type);
+            -- put delete function here, i put a filler code
+            IO.Put (Ada.Characters.Latin_1.LF & "Deleting...");
+            IO.Put (Ada.Characters.Latin_1.LF & "Starting address: ");
+            Ada.Text_IO.Unbounded_IO.Put (start_address_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "Ending address: ");
+            Ada.Text_IO.Unbounded_IO.Put (end_address_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
+            Ada.Text_IO.Unbounded_IO.Put (mode_type);
         end if;
     end delete;
 

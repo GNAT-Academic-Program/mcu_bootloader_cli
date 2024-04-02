@@ -52,23 +52,23 @@ package Serial renames GNAT.Serial_Communications;
         mode_type : Unbounded_String := mode;
     begin
         if mode = "" then
-            -- default mode flash here, replace filler code
-            IO.Put_Line("");
-            IO.Put_Line("Flashing at address: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (address_string);
-            IO.Put_Line("with file: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (file_string);
-            IO.Put_Line("in mode: ");
-            IO.Put_Line ("default mode");
+            -- default mode delete here, replace filler code
+            IO.Put (Ada.Characters.Latin_1.LF & "Flashing...");
+            IO.Put (Ada.Characters.Latin_1.LF & "Address: ");
+            Ada.Text_IO.Unbounded_IO.Put (address_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "File: ");
+            Ada.Text_IO.Unbounded_IO.Put (file_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
+            IO.Put ("default mode");
         else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
-            -- put flash function here, i put a filler code
-            IO.Put_Line("");
-            IO.Put_Line("Flashing address: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (address_string);
-            IO.Put_Line("with file: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (file_string);
-            IO.Put_Line("in mode: ");
-            Ada.Text_IO.Unbounded_IO.Put_Line (mode_type);
+            -- put delete function here, i put a filler code
+            IO.Put (Ada.Characters.Latin_1.LF & "Flashing...");
+            IO.Put (Ada.Characters.Latin_1.LF & "Address: ");
+            Ada.Text_IO.Unbounded_IO.Put (address_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "File: ");
+            Ada.Text_IO.Unbounded_IO.Put (file_string);
+            IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
+            Ada.Text_IO.Unbounded_IO.Put (mode_type);
         end if;
     end flash;
 
