@@ -13,6 +13,7 @@ with Ada.Command_Line;
 with system_info;
 with flash_program;
 with delete_program;
+with verify_program;
 with utilities_cli; use utilities_cli;
 with help_page; use help_page;
 procedure CLI is
@@ -20,7 +21,7 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, delete, help, clear, quit);
+   type Arguments is (info, flash, delete, help, clear, quit, verify);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
@@ -56,6 +57,7 @@ begin
             when info => system_info.board_info;
             when flash => flash_program.parse_sub_command(sub_cmd_list);
             when delete => delete_program.parse_sub_command(sub_cmd_list);
+            when verify => verify_program.parse_sub_command(sub_cmd_list);
             when clear => utilities_cli.Clear_Screen;
             when quit => exit;
          end case;

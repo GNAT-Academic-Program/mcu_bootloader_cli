@@ -4,6 +4,7 @@ with flash_program;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with utilities_cli;
 with delete_program;
+with verify_program;
 with system_info;
 with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
 with Ada.Containers.Vectors;
@@ -29,6 +30,8 @@ package body help_page is
                 help_page;
             elsif (sub_cmd = "quit" or sub_cmd = "6") then
                 quit_page;
+            elsif (sub_cmd = "verify" or sub_cmd = "7") then
+                verify_page;
             else
                 Put_Line("Unknown sub command: " & sub_cmd & ". Please run " & utilities_cli.bold & "help" & utilities_cli.unbold & " for available commands");
             end if;
@@ -165,6 +168,50 @@ package body help_page is
         end loop;
     end delete_page;
 
+    procedure verify_page is
+        Input_Char : Character;
+        verifyParams : verify_program.param_map.Map;
+        verifyCursor : verify_program.param_map.Cursor;
+    begin
+        -- title of page
+        Put_line("verify (7)");
+
+        -- name
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "NAME" & utilities_cli.unbold); 
+        Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " - verifies an area in memory");
+
+        -- synopsis
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " [start address][end address][file][mode]");
+
+        -- description
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " " & verify_program.description);
+
+        -- options
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "OPTIONS" & utilities_cli.unbold);
+        verifyParams := verify_program.parameters;
+        verifyCursor := verify_program.param_map.First(verifyParams);
+        -- bugged? not in order
+        while verify_program.param_map.Has_Element(verifyCursor) loop
+            Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "[" & verify_program.param_map.Key(verifyCursor) & "]" & utilities_cli.unbold & "   " & verify_program.param_map.Element(verifyCursor));
+            verify_program.param_map.Next(verifyCursor);
+        end loop;
+
+        -- version history
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "VERSION HISTORY" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
+
+        -- quit command
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
+        loop
+            Ada.Text_IO.Get_Immediate(Input_Char);
+            if Input_Char = Ada.Characters.Latin_1.ESC then
+                exit;
+            end if;
+        end loop;
+    end verify_page;
+
     procedure clear_page is
         Input_Char : Character;
     begin
@@ -286,6 +333,7 @@ package body help_page is
         Put_line(Ada.Characters.Latin_1.HT & "4. delete");
         Put_line(Ada.Characters.Latin_1.HT & "5. clear");
         Put_line(Ada.Characters.Latin_1.HT & "6. quit");
+        Put_line(Ada.Characters.Latin_1.HT & "7. verify");
 
         -- quit page
         Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
