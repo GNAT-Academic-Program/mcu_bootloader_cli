@@ -139,7 +139,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " [mode][file]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " [sector][mode]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);

@@ -1,3 +1,5 @@
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
+
 package body system_info is
 package IO renames Ada.Text_IO;
 package Serial renames GNAT.Serial_Communications;
@@ -34,8 +36,7 @@ package Serial renames GNAT.Serial_Communications;
         S_Port.Read(Buffer => I_Buffer, Last => I_Offset);
 
         if Integer(I_Offset) < Integer(I_Size) then
-            IO.Put_Line("");
-            IO.Put_Line("Data not received from board");
+            IO.Put_Line(Ada.Characters.Latin_1.LF & "Data not received from board");
             return;
         end if;
 
@@ -48,8 +49,7 @@ package Serial renames GNAT.Serial_Communications;
 
         To_Hex(To_UInt16(Revision_ID_Arr), Revision_ID);
 
-        IO.Put_Line("");
-        IO.Put_Line("Device ID: 0x" & Device_ID);
+        IO.Put_Line(Ada.Characters.Latin_1.LF & "Device ID: 0x" & Device_ID);
         IO.Put_Line("Revision ID: 0x" & Revision_ID);
      
     end board_info;
@@ -62,7 +62,7 @@ package Serial renames GNAT.Serial_Communications;
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
-        params.Insert("NULL", "");
+        --params.Insert("NULL", "");
 
         return params;
     end parameters;
