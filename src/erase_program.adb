@@ -1,6 +1,8 @@
 with utilities_cli;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
+with Ada.Direct_IO;
+
 with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 
 package body erase_program is
@@ -43,6 +45,11 @@ package body erase_program is
     end erase_handler;
 
     procedure erase(sector : Integer; mode : Unbounded_String) is 
+        package Float_IO is new Ada.Direct_IO (Float);
+        use Float_IO;
+
+
+
         sector_selection : Integer := sector;
         mode_type : Unbounded_String := mode;
     begin

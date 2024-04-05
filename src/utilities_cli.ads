@@ -2,6 +2,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Strings.Maps; use Ada.Strings.Maps;
 with Ada.Containers.Vectors;
 with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
+with Interfaces; use Interfaces;
 --with Interfaces; use Interfaces;
 
 package utilities_cli is
@@ -12,6 +13,7 @@ package utilities_cli is
     
     type subCommands is array (1..5) of Character;
     type byteArr is array (1..2) of Uint8;
+    type addrArr is array (1..4) of Uint8;
 
     info_number : constant UInt8 := 16#07#;
     flash_number : constant UInt8 := 16#01#;
@@ -39,6 +41,8 @@ package utilities_cli is
 
     procedure To_Hex (Value : Uint12; Hex_String : in out String);
 
+    function HexToInteger(Hex_String : String) return Integer;
+
     function To_Hex_Digit (Value : Uint4) return Character;
 
     function To_UInt16 (Val : byteArr) return UInt16; 
@@ -46,4 +50,6 @@ package utilities_cli is
     function To_UInt12 (Val : byteArr) return UInt12;
 
     procedure Clear_Screen;
+
+    function Addr_To_Bytes (Val : Unsigned_32) return addrArr;
 end utilities_cli;

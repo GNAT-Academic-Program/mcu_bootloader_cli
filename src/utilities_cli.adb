@@ -64,6 +64,35 @@ package body utilities_cli is
 
     end Clear_Screen;
 
+    function HexToInteger(Hex_String : String) return Integer is
+    Result : Integer := 0;
+    Digit : Character;
+    Digit_Value : Integer;
+
+    InvalidHexCharacter : exception;
+
+    begin
+        for I in Hex_String'Range loop
+            Digit := Hex_String(I);
+
+            case Digit is
+                when '0'..'9' => Digit_Value := Character'Pos(Digit) - Character'Pos('0');
+                when 'A'..'F' => Digit_Value := Character'Pos(Digit) - Character'Pos('A') + 10;
+                when 'a'..'f' => Digit_Value := Character'Pos(Digit) - Character'Pos('a') + 10;
+                when others   => raise InvalidHexCharacter;
+            end case;
+            Result := (Result * 16) + Digit_Value;
+        end loop;
+
+        return Result;
+
+    exception
+        when InvalidHexCharacter =>
+            Put_Line("Error: Invalid hexadecimal character detected.");
+            return 0;
+
+    end HexToInteger;
+
     function To_Hex_Digit (Value : Uint4) return Character is
     begin
        case Value is
@@ -126,4 +155,17 @@ package body utilities_cli is
 
         return Combined;
     end To_Uint16;
+
+    --Takes a memory 32 bit memory address and converts it to 4 bytes to be sent to the board
+    function Addr_To_Bytes (Val : Unsigned_32) return addrArr is
+        Sol : addrArr;
+    begin
+        Sol(1) := UInt8(Shift_Right(Val, 24));
+        Sol(2) := UInt8(Shift_Right((Val mod 16#FF000000#), 16));
+        Sol(3) := UInt8(Shift_Right((Val mod 16#FFFF0000#), 8));
+        Sol(4) := UInt8(Val mod 16#FFFFFF00#);
+
+        return Sol;
+    end Addr_To_Bytes;
+
 end utilities_cli;
