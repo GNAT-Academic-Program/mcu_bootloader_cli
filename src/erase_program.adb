@@ -48,16 +48,21 @@ package body erase_program is
         package Float_IO is new Ada.Direct_IO (Float);
         use Float_IO;
 
-
-
         sector_selection : Integer := sector;
         mode_type : Unbounded_String := mode;
+        start_address : Integer;
+        end_address : Integer;
     begin
+        utilities_cli.Sector_to_Addresses(sector_selection, start_address, end_address);
         if mode = "" then
             -- default mode erase here, replace filler code
             IO.Put (Ada.Characters.Latin_1.LF & "Erasing...");
             IO.Put (Ada.Characters.Latin_1.LF & "Sector:");
             IO.Put (sector_selection'Image);
+            IO.Put (Ada.Characters.Latin_1.LF & "Starting Address:");
+            IO.Put (start_address'Image);
+            IO.Put (Ada.Characters.Latin_1.LF & "Ending Address:");
+            IO.Put (end_address'Image);
             IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
             IO.Put ("default mode");
         else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
@@ -65,6 +70,10 @@ package body erase_program is
             IO.Put (Ada.Characters.Latin_1.LF & "Erasing...");
             IO.Put (Ada.Characters.Latin_1.LF & "Sector:");
             IO.Put (sector_selection'Image);
+            IO.Put (Ada.Characters.Latin_1.LF & "Starting Address:");
+            IO.Put (start_address'Image);
+            IO.Put (Ada.Characters.Latin_1.LF & "Ending Address:");
+            IO.Put (end_address'Image);
             IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
             Ada.Text_IO.Unbounded_IO.Put (mode_type);
         end if;

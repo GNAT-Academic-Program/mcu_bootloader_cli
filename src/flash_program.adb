@@ -64,7 +64,6 @@ package Serial renames GNAT.Serial_Communications;
         -- 3-7: address
         -- 8: length to read
 
-        -- START HERE
         O_Size : Ada.Streams.Stream_Element_Offset := 256;
         O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
 
