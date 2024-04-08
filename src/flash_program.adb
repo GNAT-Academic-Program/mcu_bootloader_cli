@@ -93,18 +93,10 @@ package Serial renames GNAT.Serial_Communications;
         Cur_Read : Ada.Streams.Stream_Element;
 
         Address_Array : addrArr;
-        asdf : Integer;
 
     begin
         if mode = "" then
-        -- default mode verify here, replace filler code
-                --  IO.Put (Ada.Characters.Latin_1.LF & "Flashing...");
-                --  IO.Put (Ada.Characters.Latin_1.LF & "Address: ");
-                --  IO.Put ("default address");
-                --  IO.Put (Ada.Characters.Latin_1.LF & "File: ");
-                --  Ada.Text_IO.Unbounded_IO.Put (file_string);
-                --  IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
-                --  IO.Put ("default mode");
+        -- default mode
         IO.Put_Line("Reading file to flash");
 
         --Opens the port we will communicate over and then set the specifications of the port
@@ -162,6 +154,7 @@ package Serial renames GNAT.Serial_Communications;
 
             end loop;
             Ada.Streams.Stream_IO.Close(I_File);
+            S_Port.Close;
 
         else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
             IO.Put (Ada.Characters.Latin_1.LF & "Verifying...");

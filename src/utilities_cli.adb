@@ -168,38 +168,4 @@ package body utilities_cli is
         return Sol;
     end Addr_To_Bytes;
 
-    procedure Sector_to_Addresses(sector : Integer; start_address : out Integer; end_address : out Integer) is
-    begin
-    if sector = 0 then
-        start_address := 134217728;
-        end_address := 134250495;
-    elsif sector = 1 then
-        start_address := 134250496;
-        end_address := 134283263;
-    elsif sector = 2 then
-        start_address := 134283264;
-        end_address := 134316031;
-    elsif sector = 3 then
-        start_address := 134316032;
-        end_address := 134348799;
-    elsif sector = 4 then
-        start_address := 134348800;
-        end_address := 134479871;
-    elsif sector = 5 then
-        start_address := 134479872;
-        end_address := 134742015;
-    elsif sector = 6 then
-        start_address := 134742016;
-        end_address := 135004159;
-    elsif sector = 7 then
-        start_address := 135004160;
-        end_address := 135266303;
-    else
-        raise Program_Error with "Invalid sector number: " & sector'Image;
-    end if;
-    exception
-        when Program_Error =>
-            Put_Line("Invalid sector number");
-    end Sector_to_Addresses;
-
 end utilities_cli;

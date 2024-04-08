@@ -17,7 +17,7 @@ package utilities_cli is
 
     info_number : constant UInt8 := 16#07#;
     flash_number : constant UInt8 := 16#01#;
-    delete_number : constant UInt8 := 16#02#;
+    erase_number : constant UInt8 := 16#02#;
 
     -- ANSI Escape Codes
     bold : constant String := Ada.Characters.Latin_1.ESC & "[1m";
@@ -52,7 +52,5 @@ package utilities_cli is
     procedure Clear_Screen;
 
     function Addr_To_Bytes (Val : Unsigned_32) return addrArr;
-
-    procedure Sector_to_Addresses(sector : Integer; start_address : out Integer; end_address : out Integer);
 
 end utilities_cli;
