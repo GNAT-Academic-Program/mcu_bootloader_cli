@@ -55,16 +55,16 @@ package body erase_program is
         end_address : Integer;
 
        -- Header Joe Protocol (JP):
-        -- 1: total size
-        -- 2: command type
-        -- 3-7: address/sector
-        -- 8: length to read
+        -- 1: total size 4
+        -- 2: command type 2
+        -- 3: sector begin 1
+        -- 4: sector end 1
 
-        O_Size : Ada.Streams.Stream_Element_Offset := 256;
+        O_Size : Ada.Streams.Stream_Element_Offset := 4;
         O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
 
-        I_Size : Ada.Streams.Stream_Element_Offset := 2;
-        I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
+        I_Size : Ada.Streams.Stream_Element_Offset := 4;
+        I_Buffer : Ada.Streams.Stream_Element_Array(1..O_Size);
         I_Offset : Ada.Streams.Stream_Element_Offset;
 
         S_Port : aliased Serial.Serial_Port;
@@ -86,29 +86,35 @@ package body erase_program is
             S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
             -- size of packet
-            O_Buffer(1) := Ada.Streams.Stream_Element(7);
+            O_Buffer(1) := Ada.Streams.Stream_Element(O_Size);
 
             --The second byte of the packet is the command code
             O_Buffer(2) := Ada.Streams.Stream_Element(erase_number);
-
-            -- takes the sector number we will flash to and puts it in the packet
-            Sector_Number_Array := Addr_To_Bytes(Unsigned_32(Sector_Num));
-            for j in 1..4 loop
-                O_Buffer(Ada.Streams.Stream_Element_Offset(j+2)) := Ada.Streams.Stream_Element(Sector_Number_Array(j));
-            end loop;
+       
+            -- Set the length to read in the header, 0
+            O_Buffer(3) := Ada.Streams.Stream_Element(sector);
 
             -- Set the length to read in the header, 0
-            O_Buffer(7) := Ada.Streams.Stream_Element(0);
+            O_Buffer(4) := Ada.Streams.Stream_Element(sector);
 
             --send the size of the packet first before the rest of the packet
             S_Port.Write(O_Buffer(1..1));
 
             --delay so the board can allocate space
-            delay until Clock + Milliseconds(10);
+            delay until Clock + Milliseconds(100);
 
             --send the rest
-            S_Port.Write(O_Buffer(2..7));
-            -- close
+            S_Port.Write(O_Buffer(2..4));
+
+            --  S_Port.Read(I_Buffer, I_Offset);
+            --  IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(1))'Image);
+
+            --  -- test
+            --  S_Port.Read(I_Buffer, I_Offset);
+            --  for j in 1..4 loop
+            --      IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(j))'Image);
+            --  end loop;
+            --close
             S_Port.Close;
         else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
             -- put erase function here, i put a filler code
