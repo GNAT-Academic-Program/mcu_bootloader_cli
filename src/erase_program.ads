@@ -15,7 +15,7 @@ package erase_program is
     function description return String;
     function parameters return param_map.Map;
     procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector);
-    procedure default_erase_handler(sector : in out Integer; mode : in out Unbounded_String);
-    procedure erase_handler(sector : Integer; mode : Unbounded_String);
-    procedure erase(sector : Integer; mode : Unbounded_String);
+    procedure default_erase_handler(sectorStart : in out Integer; sectorEnd : in out Integer);
+    procedure erase_handler(sectorStart : Integer; sectorEnd : Integer);
+    procedure erase(sectorStart : Integer; sectorEnd : Integer);
 end erase_program;

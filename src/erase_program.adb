@@ -14,43 +14,43 @@ package body erase_program is
 
     begin
         if sub_cmd_list.Element(0) = "" then
-            erase_handler(-1, To_Unbounded_String(""));
+            erase_handler(-1, -1);
         elsif sub_cmd_list.Length = 1 then
-            erase_handler(Integer'Value (To_String (sub_cmd_list.Element(0))), To_Unbounded_String(""));
+            erase_handler(Integer'Value (To_String (sub_cmd_list.Element(0))), Integer'Value (To_String (sub_cmd_list.Element(0))));
         elsif sub_cmd_list.Length = 2 then
-            erase_handler(Integer'Value (To_String (sub_cmd_list.Element(0))), sub_cmd_list.Element(1));
+            erase_handler(Integer'Value (To_String (sub_cmd_list.Element(0))), Integer'Value (To_String (sub_cmd_list.Element(1))));
         else
             IO.Put_Line("Too many arguments for the erase command. Run " & utilities_cli.bold & "help erase" & utilities_cli.unbold & " for required arguments");
         end if;
     end parse_sub_command;
 
-    procedure default_erase_handler(sector : in out Integer; mode : in out Unbounded_String) is
+    procedure default_erase_handler(sectorStart : in out Integer; sectorEnd : in out Integer) is
     begin
         IO.Put (Ada.Characters.Latin_1.LF & utilities_cli.bold & "Erase Program" & utilities_cli.unbold & Ada.Characters.Latin_1.LF & Ada.Characters.Latin_1.LF);
-        IO.Put ("Enter the sector to erase: ");
-        sector := Integer'Value (To_String (Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line)));
-        IO.Put ("Enter the mode of erase (leave blank for default mode): ");
-        mode := Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line);
+        IO.Put ("Enter the starting sector to erase: ");
+        sectorStart := Integer'Value (To_String (Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line)));
+        IO.Put ("Enter the ending sector to erase: ");
+        sectorEnd := Integer'Value (To_String (Ada.Strings.Unbounded.To_Unbounded_String(Ada.Text_IO.Get_Line)));
     end default_erase_handler;
 
-    procedure erase_handler(sector : Integer; mode : Unbounded_String) is 
-        sector_selection : Integer := sector;
-        mode_type : Unbounded_String := mode;
+    procedure erase_handler(sectorStart : Integer; sectorEnd : Integer) is 
+        sector_start_selection : Integer := sectorStart;
+        sector_end_selection : Integer := sectorEnd;
     begin
-        if sector_selection = -1 then
+        if sector_start_selection = -1 then
             -- default erase handler
-            default_erase_handler(sector_selection, mode_type);
+            default_erase_handler(sector_start_selection, sector_end_selection);
         end if;
         -- erase program
-        erase(sector_selection, mode_type);
+        erase(sector_start_selection, sector_end_selection);
     end erase_handler;
 
-    procedure erase(sector : Integer; mode : Unbounded_String) is 
+    procedure erase(sectorStart : Integer; sectorEnd : Integer) is 
         package Float_IO is new Ada.Direct_IO (Float);
         use Float_IO;
 
-        sector_selection : Integer := sector;
-        mode_type : Unbounded_String := mode;
+        sector_start_selection : Integer := sectorStart;
+        sector_end_selection : Integer := sectorEnd;
         start_address : Integer;
         end_address : Integer;
 
@@ -72,62 +72,48 @@ package body erase_program is
         Com_Port : Serial.Port_Name := "/dev/ttyACM0";
 
         --Address we will start writing to on the board should be a parameter in the future
-        Sector_Num : Integer := sector;
+        Sector_Num_Start : Integer := sector_start_selection;
+        Sector_Num_End : Integer := sector_end_selection;
 
         Sector_Number_Array : addrArr;
     begin
+        IO.Put_Line("Erasing");
 
-        if mode = "" then
-            -- default mode
-            IO.Put_Line("Erasing");
+        --Opens the port we will communicate over and then set the specifications of the port
+        S_Port.Open(Com_Port);
+        S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
-            --Opens the port we will communicate over and then set the specifications of the port
-            S_Port.Open(Com_Port);
-            S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
+        -- size of packet
+        O_Buffer(1) := Ada.Streams.Stream_Element(O_Size);
 
-            -- size of packet
-            O_Buffer(1) := Ada.Streams.Stream_Element(O_Size);
+        --The second byte of the packet is the command code
+        O_Buffer(2) := Ada.Streams.Stream_Element(erase_number);
+    
+        -- Set the length to read in the header, 0
+        O_Buffer(3) := Ada.Streams.Stream_Element(Sector_Num_Start);
 
-            --The second byte of the packet is the command code
-            O_Buffer(2) := Ada.Streams.Stream_Element(erase_number);
-       
-            -- Set the length to read in the header, 0
-            O_Buffer(3) := Ada.Streams.Stream_Element(sector);
+        -- Set the length to read in the header, 0
+        O_Buffer(4) := Ada.Streams.Stream_Element(Sector_Num_End);
 
-            -- Set the length to read in the header, 0
-            O_Buffer(4) := Ada.Streams.Stream_Element(sector);
+        --send the size of the packet first before the rest of the packet
+        S_Port.Write(O_Buffer(1..1));
 
-            --send the size of the packet first before the rest of the packet
-            S_Port.Write(O_Buffer(1..1));
+        --delay so the board can allocate space
+        delay until Clock + Milliseconds(100);
 
-            --delay so the board can allocate space
-            delay until Clock + Milliseconds(100);
+        --send the rest
+        S_Port.Write(O_Buffer(2..4));
 
-            --send the rest
-            S_Port.Write(O_Buffer(2..4));
+        --  S_Port.Read(I_Buffer, I_Offset);
+        --  IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(1))'Image);
 
-            --  S_Port.Read(I_Buffer, I_Offset);
-            --  IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(1))'Image);
-
-            --  -- test
-            --  S_Port.Read(I_Buffer, I_Offset);
-            --  for j in 1..4 loop
-            --      IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(j))'Image);
-            --  end loop;
-            --close
-            S_Port.Close;
-        else -- non-default mode, lets say mode 1. Can add more mode with elseif mode = ...
-            -- put erase function here, i put a filler code
-            IO.Put (Ada.Characters.Latin_1.LF & "Erasing...");
-            IO.Put (Ada.Characters.Latin_1.LF & "Sector:");
-            IO.Put (sector_selection'Image);
-            IO.Put (Ada.Characters.Latin_1.LF & "Starting Address:");
-            IO.Put (start_address'Image);
-            IO.Put (Ada.Characters.Latin_1.LF & "Ending Address:");
-            IO.Put (end_address'Image);
-            IO.Put (Ada.Characters.Latin_1.LF & "Mode: ");
-            Ada.Text_IO.Unbounded_IO.Put (mode_type);
-        end if;
+        --  -- test
+        --  S_Port.Read(I_Buffer, I_Offset);
+        --  for j in 1..4 loop
+        --      IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(j))'Image);
+        --  end loop;
+        --close
+        S_Port.Close;
     end erase;
 
     function description return String is
