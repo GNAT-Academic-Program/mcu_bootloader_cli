@@ -65,7 +65,7 @@ package body erase_program is
 
         I_Size : Ada.Streams.Stream_Element_Offset := 4;
         I_Buffer : Ada.Streams.Stream_Element_Array(1..O_Size);
-        I_Offset : Ada.Streams.Stream_Element_Offset;
+        I_Offset : Ada.Streams.Stream_Element_Offset := 0;
 
         S_Port : aliased Serial.Serial_Port;
 
@@ -77,7 +77,7 @@ package body erase_program is
 
         Sector_Number_Array : addrArr;
     begin
-        IO.Put_Line("Erasing");
+        IO.Put_Line("Erasing...");
 
         --Opens the port we will communicate over and then set the specifications of the port
         S_Port.Open(Com_Port);
@@ -104,8 +104,14 @@ package body erase_program is
         --send the rest
         S_Port.Write(O_Buffer(2..4));
 
-        --  S_Port.Read(I_Buffer, I_Offset);
-        --  IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(1))'Image);
+        while Integer(I_Offset) < 1 loop
+            S_Port.Read(I_Buffer, I_Offset);
+        end loop;
+        if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(1)))= 1 then
+            IO.Put_Line ("Erasing succeded.");
+        else
+            IO.Put_Line ("Erasing failed.");
+        end if;
 
         --  -- test
         --  S_Port.Read(I_Buffer, I_Offset);
@@ -125,8 +131,8 @@ package body erase_program is
     function parameters return param_map.Map is
         params : param_map.Map;
     begin
-        params.Insert("sector", "The sector in memory to erase.");
-        params.Insert("mode", "The mode to run the erase program. Optional, default mode is __");
+        params.Insert("sectorStart", "The starting sector in memory to erase.");
+        params.Insert("sectorEnd", "The ending sector in memory to erase.");
 
         return params;
     end parameters;

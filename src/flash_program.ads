@@ -15,7 +15,7 @@ package flash_program is
     function description return String;
     function parameters return param_map.Map;
     procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector);
-    procedure default_flash_handler(file : in out Unbounded_String; address : in out Unbounded_String; mode : in out Unbounded_String);
-    procedure flash_handler(file : Unbounded_String; address : Unbounded_String; mode : Unbounded_String);
-    procedure flash(file : Unbounded_String; address : Unbounded_String; mode : Unbounded_String);
+    procedure default_flash_handler(file : in out Unbounded_String; address : in out Unbounded_String);
+    procedure flash_handler(file : Unbounded_String; address : Unbounded_String);
+    procedure flash(file : Unbounded_String; address : Unbounded_String);
 end flash_program;
