@@ -53,4 +53,8 @@ package utilities_cli is
 
     function Addr_To_Bytes (Val : Unsigned_32) return addrArr;
 
+    procedure Sector_to_Addresses(sector : Integer; start_address : out Integer; end_address : out Integer);
+
+    function Addresses_to_Sector(address : Integer) return Integer;
+
 end utilities_cli;

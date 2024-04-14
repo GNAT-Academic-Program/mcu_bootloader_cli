@@ -7,6 +7,7 @@ with Ada.Streams.Stream_IO; use Ada.Streams.Stream_IO;
 with Ada.Direct_IO;
 with Ada.IO_Exceptions; use Ada.IO_Exceptions;
 with Interfaces; use Interfaces;
+with erase_program;
 
 package body flash_program is
 package IO renames Ada.Text_IO;
@@ -55,15 +56,15 @@ package Serial renames GNAT.Serial_Communications;
         -- Header Joe Protocol (JP):
         -- 1: total size
         -- 2: command type
-        -- 3-7: address
-        -- 8: length to read
+        -- 3-6: address
+        -- 7: length to read
 
         O_Size : Ada.Streams.Stream_Element_Offset := 256;
         O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
 
         I_Size : Ada.Streams.Stream_Element_Offset := 2;
         I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
-        I_Offset : Ada.Streams.Stream_Element_Offset;
+        I_Offset : Ada.Streams.Stream_Element_Offset := 0;
 
         S_Port : aliased Serial.Serial_Port;
 
@@ -79,6 +80,8 @@ package Serial renames GNAT.Serial_Communications;
         --Address we will start writing to on the board should be a parameter in the future
         Base_Mem_Address : Integer := HexToInteger(address_string);
 
+        End_Mem_Address : Integer;
+
         File_Path : String := file_string;
 
         I_File : Ada.Streams.Stream_IO.File_Type;
@@ -88,6 +91,9 @@ package Serial renames GNAT.Serial_Communications;
 
         Address_Array : addrArr;
 
+        Begin_Sector : Integer;
+        End_Sector : Integer;
+
     begin
         -- default mode
         IO.Put_Line("Reading file to flash");
@@ -96,19 +102,27 @@ package Serial renames GNAT.Serial_Communications;
         S_Port.Open(Com_Port);
         S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
-        --The second byte of the packet is the command code
-        O_Buffer(2) := Ada.Streams.Stream_Element(flash_number);
-
         Ada.Streams.Stream_IO.Open(I_File, Ada.Streams.Stream_IO.In_File, File_Path);
 
         File_Size := Integer(Ada.Streams.Stream_IO.Size(I_File));
 
+        End_Mem_Address := Base_Mem_Address + File_Size;
+
+        Begin_Sector := utilities_cli.Addresses_to_Sector(Base_Mem_Address);
+        End_Sector := utilities_cli.Addresses_to_Sector(End_Mem_Address);
+
+        -- erase sectors to be flashed
+        erase_program.erase(Begin_Sector, End_Sector);
+
         I_Stream := Ada.Streams.Stream_IO.Stream(I_File);
 
         Bytes_Remaining := File_Size - Bytes_Sent;
+        IO.Put_Line(Ada.Characters.Latin_1.LF & "Flashing...");
 
         while Bytes_Remaining > 0 loop
             --Sets the number of bytes to send to the board in this packet
+            --The second byte of the packet is the command code
+            O_Buffer(2) := Ada.Streams.Stream_Element(flash_number);
 
             if Bytes_Remaining > File_Chunk then
                 Len_To_Read := File_Chunk;
@@ -124,7 +138,8 @@ package Serial renames GNAT.Serial_Communications;
             end loop;
 
 
-            -- takes the memory address we will flash to and puts it in the packet
+            -- takes the memory address we will flash to and puts it in the packet 
+            -- FAILS HERE
             Address_Array := Addr_To_Bytes(Unsigned_32(Base_Mem_Address));
             for j in 1..4 loop
                 O_Buffer(Ada.Streams.Stream_Element_Offset(j+2)) := Ada.Streams.Stream_Element(Address_Array(j));
@@ -142,11 +157,24 @@ package Serial renames GNAT.Serial_Communications;
             --send the rest
             S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(Len_To_Read)));
 
+            delay until Clock + Milliseconds(10);
+
             Bytes_Sent := Bytes_Sent + Len_To_Read;
             Bytes_Remaining := File_Size - Bytes_Sent;
-
-            end loop;
+            Base_Mem_Address := Base_Mem_Address + Len_To_Read;
+            IO.Put_Line(O_Buffer(1)'Image);
+        end loop;
         Ada.Streams.Stream_IO.Close(I_File);
+
+        while Integer(I_Offset) < 1 loop
+            S_Port.Read(I_Buffer, I_Offset);
+        end loop;
+        if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(1))) = 1 then
+            IO.Put_Line ("Flashing succeded.");
+        else
+            IO.Put_Line ("Flashing failed.");
+        end if;
+
         S_Port.Close;
     -- file not found
     exception

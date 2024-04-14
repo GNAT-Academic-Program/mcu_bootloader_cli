@@ -160,12 +160,66 @@ package body utilities_cli is
     function Addr_To_Bytes (Val : Unsigned_32) return addrArr is
         Sol : addrArr;
     begin
-        Sol(1) := UInt8(Shift_Right(Val, 24));
-        Sol(2) := UInt8(Shift_Right((Val mod 16#FF000000#), 16));
-        Sol(3) := UInt8(Shift_Right((Val mod 16#FFFF0000#), 8));
-        Sol(4) := UInt8(Val mod 16#FFFFFF00#);
+        Sol(1) := UInt8(Val / 16#1000000#);
+        Sol(2) := UInt8((Val / 16#10000#) and 16#FF#);
+        Sol(3) := UInt8((Val / 16#100#) and 16#FF#);
+        Sol(4) := UInt8(Val and 16#FF#);
 
         return Sol;
     end Addr_To_Bytes;
+
+    procedure Sector_to_Addresses(sector : Integer; start_address : out Integer; end_address : out Integer) is
+    begin
+   -- STM32F756xx and STM32F74xxx Flash Memory Organization
+    if sector = 0 then
+        start_address := 16#0800_0000#;
+        end_address := 16#0800_7FFF#;
+    elsif sector = 1 then
+        start_address := 16#0800_8000#;
+        end_address := 16#0800_FFFF#;
+    elsif sector = 2 then
+        start_address := 16#0801_0000#;
+        end_address := 16#0801_7FFF#;
+    elsif sector = 3 then
+        start_address := 16#0801_8000#;
+        end_address := 16#0801_FFFF#;
+    elsif sector = 4 then
+        start_address := 16#0802_0000#;
+        end_address := 16#0803_FFFF#;
+    elsif sector = 5 then
+        start_address := 16#0804_0000#;
+        end_address := 16#0807_FFFF#;
+    elsif sector = 6 then
+        start_address := 16#0808_0000#;
+        end_address := 16#080B_FFFF#;
+    elsif sector = 7 then
+        start_address := 16#080C_0000#;
+        end_address := 16#080F_FFFF#;
+    end if;
+    end Sector_to_Addresses;
+
+    function Addresses_to_Sector(address : Integer) return Integer is
+        sector : Integer;
+    begin
+   -- STM32F756xx and STM32F74xxx Flash Memory Organization
+    if address >= 16#0800_0000# and address <= 16#0800_7FFF# then
+        sector := 0;
+    elsif address >= 16#0800_8000# and address <= 16#0800_FFFF# then
+        sector := 1;
+    elsif address >= 16#0801_0000# and address <= 16#0801_7FFF# then
+        sector := 2;
+    elsif address >= 16#0801_8000# and address <= 16#0801_FFFF# then
+        sector := 3;
+    elsif address >= 16#0802_0000# and address <= 16#0803_FFFF# then
+        sector := 4;
+    elsif address >= 16#0804_0000# and address <= 16#0807_FFFF# then
+        sector := 5;
+    elsif address >= 16#0808_0000# and address <= 16#080B_FFFF# then
+        sector := 6;
+    elsif address >= 16#080C_0000# and address <= 16#080F_FFFF# then
+        sector := 7;
+    end if;
+    return sector;
+    end Addresses_to_Sector;
 
 end utilities_cli;
