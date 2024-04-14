@@ -27,9 +27,9 @@ test_flash_command() {
   assertEquals "$expected" "$output" 
 }
 
-test_delete_command() {
-  output=$(printf "delete\nquit\n" | ../bin/mcu_cli)
-  expected=$(echo -ne "> Delete command placeholder\n\nDetected sub commands: \n\n> \n")
+test_erase_command() {
+  output=$(printf "erase 6 7\nquit\n" | ../bin/mcu_cli)
+  expected=$(echo -ne "Erasing...\nErasing suceeded.\n\nuser > \n")
   assertEquals "$expected" "$output" 
 }
 
