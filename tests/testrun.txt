@@ -1,1 +1,7 @@
-[32muser[0m > Erasing...
+[32muser[0m > 
+[1mErase Program[22m
+
+Enter the starting sector to erase: Enter the ending sector to erase: Erasing...
+Erasing succeeded.
+
+[32muser[0m > 

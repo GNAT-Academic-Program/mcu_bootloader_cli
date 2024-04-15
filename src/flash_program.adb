@@ -170,7 +170,7 @@ package Serial renames GNAT.Serial_Communications;
             S_Port.Read(I_Buffer, I_Offset);
         end loop;
         if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(1))) = 1 then
-            IO.Put_Line ("Flashing succeded.");
+            IO.Put_Line ("Flashing succeeded.");
         else
             IO.Put_Line ("Flashing failed.");
         end if;
