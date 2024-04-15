@@ -13,4 +13,5 @@ package help_page is
     procedure quit_page;
     procedure help_page;
     procedure verify_page;
+    procedure reset_page;
 end help_page;

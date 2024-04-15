@@ -63,8 +63,8 @@ package body erase_program is
         O_Size : Ada.Streams.Stream_Element_Offset := 4;
         O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
 
-        I_Size : Ada.Streams.Stream_Element_Offset := 4;
-        I_Buffer : Ada.Streams.Stream_Element_Array(1..O_Size);
+        I_Size : Ada.Streams.Stream_Element_Offset := 1;
+        I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
         I_Offset : Ada.Streams.Stream_Element_Offset := 0;
 
         S_Port : aliased Serial.Serial_Port;

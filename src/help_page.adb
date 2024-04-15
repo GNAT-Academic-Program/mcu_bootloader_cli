@@ -32,6 +32,8 @@ package body help_page is
                 quit_page;
             elsif (sub_cmd = "verify" or sub_cmd = "7") then
                 verify_page;
+            elsif (sub_cmd = "reset" or sub_cmd = "8") then
+                reset_page;
             else
                 Put_Line("Unknown sub command: " & sub_cmd & ". Please run " & utilities_cli.bold & "help" & utilities_cli.unbold & " for available commands");
             end if;
@@ -319,6 +321,42 @@ package body help_page is
             end if;
         end loop;
     end help_page;
+
+    procedure reset_page is
+        Input_Char : Character;
+    begin
+        -- title of page
+        Put_line("reset (8)");
+
+        -- name
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "NAME" & utilities_cli.unbold); 
+        Put_line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "reset" & utilities_cli.unbold & " - resets the microcontroller");
+
+        -- synopsis
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "reset" & utilities_cli.unbold & " [NULL]");
+
+        -- description
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "reset" & utilities_cli.unbold & " put reset description here");
+
+        -- options
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "OPTIONS" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "NULL" & utilities_cli.unbold);
+
+        -- version history
+        Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "VERSION HISTORY" & utilities_cli.unbold);
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 4/14/2024 written by Xavier Zhang");
+
+        -- quit command
+        Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
+        loop
+            Ada.Text_IO.Get_Immediate(Input_Char);
+            if Input_Char = Ada.Characters.Latin_1.ESC then
+                exit;
+            end if;
+        end loop;
+    end reset_page;
 
     procedure main_page is 
         Input_Char : Character;

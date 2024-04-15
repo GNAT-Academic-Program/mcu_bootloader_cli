@@ -14,6 +14,7 @@ with system_info;
 with flash_program;
 with erase_program;
 with verify_program;
+with reset_board;
 with utilities_cli; use utilities_cli;
 with help_page; use help_page;
 procedure CLI is
@@ -21,7 +22,7 @@ procedure CLI is
    package IO renames Ada.Text_IO;
 
    --enumeration of arguments
-   type Arguments is (info, flash, erase, help, clear, quit, verify);
+   type Arguments is (info, flash, erase, help, clear, quit, verify, reset);
    
    arg : Unbounded_String;
    Delimiter : Character_Set;
@@ -59,6 +60,7 @@ begin
             when erase => erase_program.parse_sub_command(sub_cmd_list);
             when verify => verify_program.parse_sub_command(sub_cmd_list);
             when clear => utilities_cli.Clear_Screen;
+            when reset => reset_board.reset;
             when quit => exit;
          end case;
       exception
