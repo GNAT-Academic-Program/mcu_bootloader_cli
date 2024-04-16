@@ -3,6 +3,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Strings.Maps; use Ada.Strings.Maps;
 with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
 with Ada.Containers.Vectors;
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 
 package body utilities_cli is
 
@@ -237,7 +238,10 @@ package body utilities_cli is
                     Put(' ');
                 end if;
             end loop;
-            Put_Line("] " & Integer(Percentage * Float(100))'Image & "%");
+            Put("] " & Integer(Percentage * Float(100))'Image & "%" & Ada.Characters.Latin_1.CR);
+            if Percentage = 1.0 then 
+                Put(Ada.Characters.Latin_1.LF);
+            end if;
         end Print_Progress_Bar;
 
         begin

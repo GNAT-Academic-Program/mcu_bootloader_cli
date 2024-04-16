@@ -119,7 +119,7 @@ package Serial renames GNAT.Serial_Communications;
         IO.Put_Line(Ada.Characters.Latin_1.LF & "Verifying...");
 
         while Bytes_Remaining > 0 loop
-            delay until Clock + Milliseconds(200);
+            delay until Clock + Milliseconds(250);
 
             --Sets the number of bytes to send to the board in this packet
             --The second byte of the packet is the command code

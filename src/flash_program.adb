@@ -126,7 +126,7 @@ package Serial renames GNAT.Serial_Communications;
         IO.Put_Line(Ada.Characters.Latin_1.LF & "Flashing...");
 
         while Bytes_Remaining > 0 loop
-            delay until Clock + Milliseconds(200);
+            delay until Clock + Milliseconds(250);
 
             --Sets the number of bytes to send to the board in this packet
             --The second byte of the packet is the command code
@@ -163,7 +163,7 @@ package Serial renames GNAT.Serial_Communications;
             --send the rest
             S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(Len_To_Read + 7)));
 
-            delay until Clock + Milliseconds(10);
+            delay until Clock + Milliseconds(100);
 
             Bytes_Sent := Bytes_Sent + Len_To_Read;
             Bytes_Remaining := File_Size - Bytes_Sent;
