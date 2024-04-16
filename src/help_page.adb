@@ -372,6 +372,7 @@ package body help_page is
         Put_line(Ada.Characters.Latin_1.HT & "5. clear");
         Put_line(Ada.Characters.Latin_1.HT & "6. quit");
         Put_line(Ada.Characters.Latin_1.HT & "7. verify");
+        Put_line(Ada.Characters.Latin_1.HT & "8. reset");
 
         -- quit page
         Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");

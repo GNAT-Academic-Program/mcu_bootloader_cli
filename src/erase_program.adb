@@ -119,6 +119,7 @@ package body erase_program is
         --      IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(j))'Image);
         --  end loop;
         --close
+        
         S_Port.Close;
     end erase;
 
