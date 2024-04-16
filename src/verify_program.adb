@@ -201,7 +201,7 @@ package Serial renames GNAT.Serial_Communications;
 
     function description return String is
     begin
-        return "Verify description";
+        return "The verify command take a binary file and memory address from the host and does an exhaustive, byte for byte, check with the provided binary file and the data located at the specified memory address in internal flash memory.";
     end description;
     -- indefinite array instead of containers
     function parameters return param_map.Map is

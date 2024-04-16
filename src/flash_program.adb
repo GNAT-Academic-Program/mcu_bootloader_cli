@@ -202,7 +202,7 @@ package Serial renames GNAT.Serial_Communications;
 
     function description return String is
     begin
-        return "Flash description";
+        return "The flash command take a binary file and memory address from the host and loads that file into that memory address and the subsequent addresses into the internal flash memory.";
     end description;
     -- indefinite array instead of containers
     function parameters return param_map.Map is

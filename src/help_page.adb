@@ -97,7 +97,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "flash" & utilities_cli.unbold & " [file][address][mode]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "flash" & utilities_cli.unbold & " [file][address]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
@@ -115,7 +115,7 @@ package body help_page is
 
         -- version history
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "VERSION HISTORY" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 4/16/2024");
 
         -- quit command
         Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
@@ -141,7 +141,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " [sector][mode]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "erase" & utilities_cli.unbold & " [endSector][beginSector]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
@@ -158,7 +158,7 @@ package body help_page is
 
         -- version history
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "VERSION HISTORY" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 4/16/2024");
 
         -- quit command
         Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");
@@ -184,7 +184,7 @@ package body help_page is
 
         -- synopsis
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "SYNOPSIS" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " [file][address][mode]");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "verify" & utilities_cli.unbold & " [file][address]");
 
         -- description
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "DESCRIPTION" & utilities_cli.unbold);
@@ -202,7 +202,7 @@ package body help_page is
 
         -- version history
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "VERSION HISTORY" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - fill here");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 4/16/2024");
 
         -- quit command
         Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");

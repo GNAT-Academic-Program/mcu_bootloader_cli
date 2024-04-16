@@ -125,7 +125,7 @@ package body erase_program is
 
     function description return String is
     begin
-        return "Erase description here";
+        return "The erase command takes sectors of the internal flash and fills the sectors with all 1s.";
     end description;
 
     -- indefinite array instead of containers
