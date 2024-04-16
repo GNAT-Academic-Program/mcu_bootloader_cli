@@ -59,10 +59,10 @@ package Serial renames GNAT.Serial_Communications;
         -- 3-6: address
         -- 7: length to read
 
-        O_Size : Ada.Streams.Stream_Element_Offset := 256;
+        O_Size : Ada.Streams.Stream_Element_Offset := 255;
         O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
 
-        I_Size : Ada.Streams.Stream_Element_Offset := 9999;
+        I_Size : Ada.Streams.Stream_Element_Offset := 1;
         I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
         I_Offset : Ada.Streams.Stream_Element_Offset := 0;
         counter1 : Integer := 0;
@@ -106,6 +106,8 @@ package Serial renames GNAT.Serial_Communications;
         S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
         Ada.Streams.Stream_IO.Open(I_File, Ada.Streams.Stream_IO.In_File, File_Path);
+
+        IO.Put_Line(Ada.Characters.Latin_1.LF & "Reading complete.");
 
         File_Size := Integer(Ada.Streams.Stream_IO.Size(I_File));
 

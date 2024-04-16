@@ -19,6 +19,7 @@ package utilities_cli is
     flash_number : constant UInt8 := 16#01#;
     erase_number : constant UInt8 := 16#02#;
     reset_number : constant UInt8 := 16#03#;
+    verify_number : constant Uint8 := 16#04#;
 
     -- ANSI Escape Codes
     bold : constant String := Ada.Characters.Latin_1.ESC & "[1m";

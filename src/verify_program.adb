@@ -3,6 +3,11 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
 with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 
+with Ada.Streams.Stream_IO; use Ada.Streams.Stream_IO; use Ada.Streams;
+with Ada.Direct_IO;
+with Ada.IO_Exceptions; use Ada.IO_Exceptions;
+with Interfaces; use Interfaces;
+
 package body verify_program is
 package IO renames Ada.Text_IO;
 package Serial renames GNAT.Serial_Communications;
@@ -35,32 +40,162 @@ package Serial renames GNAT.Serial_Communications;
     begin
         if file = "" then
             -- default flash handler
-            default_verify_handler(address_string, file_string);
+            default_verify_handler(file_string, address_string);
         end if;
         -- flash program
-        verify(address_string, file_string);
+        verify(file_string, address_string);
     end verify_handler;
 
     procedure verify(file : Unbounded_String; address : Unbounded_String) is 
-        address_string : Unbounded_String := address;
-        file_string : Unbounded_String := file;
+        address_string : String := To_String(address);
+        file_string : String := To_String(file);
+
+        source_file : Ada.Streams.Stream_IO.File_Type;
+
+        -- Header Joe Protocol (JP):
+        -- 1: total size
+        -- 2: command type
+        -- 3-6: address
+
+        O_Size : Ada.Streams.Stream_Element_Offset := 7;
+        O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
+
+        I_Size : Ada.Streams.Stream_Element_Offset := 255;
+        I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
+        I_Offset : Ada.Streams.Stream_Element_Offset := 0;
+        counter1 : Integer := 0;
+
+        S_Port : aliased Serial.Serial_Port;
+
+        Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+        Bytes_Remaining : Integer := 0;
+        Bytes_Sent : Integer := 0;
+        File_Size : Integer := 0;
+        Len_To_Read : Integer := 0;
+
+        --Max number of bytes from the file sent to the board at once
+        File_Chunk : Integer := 248;
+
+        --Address we will start writing to on the board should be a parameter in the future
+        Base_Mem_Address : Integer := HexToInteger(address_string);
+
+        End_Mem_Address : Integer;
+
+        File_Path : String := file_string;
+
+        I_File : Ada.Streams.Stream_IO.File_Type;
+        I_Stream : Ada.Streams.Stream_IO.Stream_Access;
+
+        Cur_Read : Ada.Streams.Stream_Element;
+
+        Address_Array : addrArr;
+
+        Begin_Sector : Integer;
+        End_Sector : Integer;
+
+        Percentage_Complete : Float;
+
+        Match : Boolean := True;
+
     begin
-        if address = "" then
-        -- default mode verify here, replace filler code
-            IO.Put (Ada.Characters.Latin_1.LF & "Verifying...");
-            IO.Put (Ada.Characters.Latin_1.LF & "Address: ");
-            IO.Put ("default address");
-            IO.Put (Ada.Characters.Latin_1.LF & "File: ");
-            Ada.Text_IO.Unbounded_IO.Put (file_string);
-            IO.Put_Line (Ada.Characters.Latin_1.LF & "Verify failed.");
+        -- default mode
+        IO.Put_Line("Reading file to verify");
+
+        --Opens the port we will communicate over and then set the specifications of the port
+        S_Port.Open(Com_Port);
+        S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
+
+        Ada.Streams.Stream_IO.Open(I_File, Ada.Streams.Stream_IO.In_File, File_Path);
+
+        IO.Put_Line(Ada.Characters.Latin_1.LF & "Reading complete.");
+
+        File_Size := Integer(Ada.Streams.Stream_IO.Size(I_File));
+
+        End_Mem_Address := Base_Mem_Address + File_Size;
+
+        I_Stream := Ada.Streams.Stream_IO.Stream(I_File);
+
+        Bytes_Remaining := File_Size - Bytes_Sent;
+        IO.Put_Line(Ada.Characters.Latin_1.LF & "Verifying...");
+
+        while Bytes_Remaining > 0 loop
+            delay until Clock + Milliseconds(200);
+
+            --Sets the number of bytes to send to the board in this packet
+            --The second byte of the packet is the command code
+            O_Buffer(2) := Ada.Streams.Stream_Element(verify_number);
+
+            if Bytes_Remaining > File_Chunk then
+                Len_To_Read := File_Chunk;
+            else
+                Len_To_Read := Bytes_Remaining;
+            end if;
+
+            O_Buffer(1) := Ada.Streams.Stream_Element(O_Size);
+
+            -- takes the memory address we will flash to and puts it in the packet 
+            Address_Array := Addr_To_Bytes(Unsigned_32(Base_Mem_Address));
+            for j in 1..4 loop
+                O_Buffer(Ada.Streams.Stream_Element_Offset(j+2)) := Ada.Streams.Stream_Element(Address_Array(j));
+            end loop;
+
+            O_Buffer(7) := Ada.Streams.Stream_Element(Len_To_Read);
+
+            --send the size of the packet first before the rest of the packet
+            S_Port.Write(O_Buffer(1..1));
+
+            --delay so the board can allocate space
+            delay until Clock + Milliseconds(100);
+
+            --send the rest
+            S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(O_Size)));
+
+            delay until Clock + Milliseconds(10);
+
+            Bytes_Sent := Bytes_Sent + Len_To_Read;
+            Bytes_Remaining := File_Size - Bytes_Sent;
+            Base_Mem_Address := Base_Mem_Address + Len_To_Read;
+
+            delay until Clock + Milliseconds(200);
+            S_Port.Read(I_Buffer, I_Offset);
+            
+            if Integer(I_Buffer(I_Offset)) /= 1 then 
+                Match := False;
+                exit;
+            end if;
+
+            for i in 1..Len_To_Read loop
+                Ada.Streams.Stream_Element'Read(I_Stream, Cur_Read);
+                --  IO.Put_Line(I_Buffer(Ada.Streams.Stream_Element_Offset(i))'Image & " : " & Cur_Read'Image);
+                if I_Buffer(Ada.Streams.Stream_Element_Offset(i)) /= Cur_Read then
+                    Match := False;
+                    exit;
+                end if;
+            end loop;
+
+            if Match = False then
+                exit;
+            end if;
+
+            Percentage_Complete := Float(1) - (Float(Bytes_Remaining)/Float(File_Size));
+            utilities_cli.Progress_Bar(Percentage_Complete);
+        end loop;
+        Ada.Streams.Stream_IO.Close(I_File);
+
+        --  while Integer(I_Offset) < 1 loop
+        --      S_Port.Read(I_Buffer, I_Offset);
+        --  end loop;
+        if Match = False then
+            IO.Put_Line ("Verification failed.");
         else
-            IO.Put (Ada.Characters.Latin_1.LF & "Verifying...");
-            IO.Put (Ada.Characters.Latin_1.LF & "Address: ");
-            Ada.Text_IO.Unbounded_IO.Put (address_string);
-            IO.Put (Ada.Characters.Latin_1.LF & "File: ");
-            Ada.Text_IO.Unbounded_IO.Put (file_string);
-            IO.Put_Line (Ada.Characters.Latin_1.LF & "Verify failed.");
+            IO.Put_Line ("Verification succeeded.");
         end if;
+
+        S_Port.Close;
+    -- file not found
+    exception
+        when Ada.IO_Exceptions.Name_Error =>
+            Ada.Text_IO.Put_Line ("File not found or cannot be opened.");
     end verify;
 
 
