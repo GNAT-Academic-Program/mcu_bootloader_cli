@@ -95,7 +95,7 @@ package Serial renames GNAT.Serial_Communications;
         Begin_Sector : Integer;
         End_Sector : Integer;
 
-        count1 : Integer;
+        Percentage_Complete : Float;
 
     begin
         -- default mode
@@ -115,8 +115,8 @@ package Serial renames GNAT.Serial_Communications;
         End_Sector := utilities_cli.Addresses_to_Sector(End_Mem_Address);
 
         -- erase sectors to be flashed
-        --erase_program.erase(Begin_Sector, End_Sector);
-        delay until Clock + Milliseconds(100);
+        erase_program.erase(Begin_Sector, End_Sector);
+        delay until Clock + Milliseconds(1000);
 
         I_Stream := Ada.Streams.Stream_IO.Stream(I_File);
 
@@ -124,7 +124,7 @@ package Serial renames GNAT.Serial_Communications;
         IO.Put_Line(Ada.Characters.Latin_1.LF & "Flashing...");
 
         while Bytes_Remaining > 0 loop
-            delay until Clock + Milliseconds(500);
+            delay until Clock + Milliseconds(200);
 
             --Sets the number of bytes to send to the board in this packet
             --The second byte of the packet is the command code
@@ -171,13 +171,13 @@ package Serial renames GNAT.Serial_Communications;
             I_Offset := 0;
             while I_Offset < 1 loop
                 S_Port.Read(I_Buffer, I_Offset);
-                IO.Put_Line("Read " & I_Offset'Image & " Bytes");
             end loop;
 
             if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(1))) /= 1 then 
                 exit;
             end if;
-            IO.Put_Line(Bytes_Remaining'Image);
+            Percentage_Complete := Float(1) - (Float(Bytes_Remaining)/Float(File_Size));
+            utilities_cli.Progress_Bar(Percentage_Complete);
         end loop;
         Ada.Streams.Stream_IO.Close(I_File);
 

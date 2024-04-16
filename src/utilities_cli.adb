@@ -222,4 +222,26 @@ package body utilities_cli is
     return sector;
     end Addresses_to_Sector;
 
+    procedure Progress_Bar(Pct_Completed : Float) is
+        Progress_Char : constant Character := '-';
+        Bar_Width : constant := 50;
+
+        -- Procedure to print progress bar
+        procedure Print_Progress_Bar(Percentage : Float) is
+        begin
+            Put("[");
+            for I in 1 .. Bar_Width loop
+                if Float(I) / Float(Bar_Width) <= Percentage then
+                    Put(Progress_Char);
+                else
+                    Put(' ');
+                end if;
+            end loop;
+            Put_Line("] " & Integer(Percentage * Float(100))'Image & "%");
+        end Print_Progress_Bar;
+
+        begin
+        Print_Progress_Bar(Pct_Completed);
+    end Progress_Bar;
+
 end utilities_cli;

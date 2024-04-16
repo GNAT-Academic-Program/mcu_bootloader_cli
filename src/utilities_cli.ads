@@ -58,4 +58,6 @@ package utilities_cli is
 
     function Addresses_to_Sector(address : Integer) return Integer;
 
+    procedure Progress_Bar(Pct_Completed : Float);
+
 end utilities_cli;
