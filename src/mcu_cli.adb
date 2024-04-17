@@ -64,7 +64,7 @@ begin
             when quit => exit;
          end case;
       exception
-        when Constraint_Error => IO.Put_Line("Unknown command: " & To_String (Command) & ". Please run " & utilities_cli.bold & "help" & utilities_cli.unbold & " for available commands");
+         when Constraint_Error => IO.Put_Line("Unknown command: " & To_String (Command) & ". Please run " & utilities_cli.bold & "help" & utilities_cli.unbold & " for available commands");
       end;
       IO.Put_Line("");
       --  IO.Put_Line("Detected sub commands: ");
