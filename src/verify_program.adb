@@ -119,8 +119,6 @@ package Serial renames GNAT.Serial_Communications;
         IO.Put_Line(Ada.Characters.Latin_1.LF & "Verifying...");
 
         while Bytes_Remaining > 0 loop
-            delay until Clock + Milliseconds(250);
-
             --Sets the number of bytes to send to the board in this packet
             --The second byte of the packet is the command code
             O_Buffer(2) := Ada.Streams.Stream_Element(verify_number);
@@ -142,6 +140,7 @@ package Serial renames GNAT.Serial_Communications;
             O_Buffer(7) := Ada.Streams.Stream_Element(Len_To_Read);
 
             --send the size of the packet first before the rest of the packet
+            delay until Clock + Milliseconds(350);
             S_Port.Write(O_Buffer(1..1));
 
             --delay so the board can allocate space

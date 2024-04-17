@@ -162,18 +162,17 @@ test_info_ignoresub_command() {
   assertEquals "$expected" "$output" 
 }
 
-# will fail
-test_verify_command() {
-  output=$(printf "verify test.bin 08080000\nquit\n" | ../bin/mcu_cli)
-  assertContains "$output" "Verify succeeded."
-}
-
 test_flash_command() {
-  output=$(printf "flash test.bin 08080000\n\x1B\x1B\nquit\n" | ../bin/mcu_cli)
+  output=$(printf "flash ../bin/firmware.bin 08080000\n\x1B\x1B\nquit\n" | ../bin/mcu_cli)
   assertContains "$output" "Flashing succeeded."
 }
 
-test_flash_command() {
+test_verify_command() {
+  output=$(printf "verify ../bin/firmware.bin 08080000\nquit\n" | ../bin/mcu_cli)
+  assertContains "$output" "Verification succeeded."
+}
+
+test_reset_command() {
   output=$(printf "reset\n\x1B\x1B\nquit\n" | ../bin/mcu_cli)
   assertContains "$output" "Reset succeeded."
 }

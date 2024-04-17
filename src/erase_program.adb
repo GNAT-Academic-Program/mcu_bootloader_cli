@@ -99,11 +99,11 @@ package body erase_program is
         S_Port.Write(O_Buffer(1..1));
 
         --delay so the board can allocate space
-        delay until Clock + Milliseconds(100);
+        delay until Clock + Milliseconds(1000);
 
         --send the rest
         S_Port.Write(O_Buffer(2..4));
-
+        delay until Clock + Milliseconds(100);
         while Integer(I_Offset) < 1 loop
             S_Port.Read(I_Buffer, I_Offset);
         end loop;

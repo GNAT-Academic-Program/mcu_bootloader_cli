@@ -118,7 +118,7 @@ package Serial renames GNAT.Serial_Communications;
 
         -- erase sectors to be flashed
         erase_program.erase(Begin_Sector, End_Sector);
-        delay until Clock + Milliseconds(1000);
+        delay until Clock + Milliseconds(2000);
 
         I_Stream := Ada.Streams.Stream_IO.Stream(I_File);
 
@@ -126,8 +126,6 @@ package Serial renames GNAT.Serial_Communications;
         IO.Put_Line(Ada.Characters.Latin_1.LF & "Flashing...");
 
         while Bytes_Remaining > 0 loop
-            delay until Clock + Milliseconds(250);
-
             --Sets the number of bytes to send to the board in this packet
             --The second byte of the packet is the command code
             O_Buffer(2) := Ada.Streams.Stream_Element(flash_number);
@@ -154,16 +152,18 @@ package Serial renames GNAT.Serial_Communications;
 
             O_Buffer(7) := Ada.Streams.Stream_Element(Len_To_Read);
 
+            delay until Clock + Milliseconds(300);
+
             --send the size of the packet first before the rest of the packet
             S_Port.Write(O_Buffer(1..1));
 
             --delay so the board can allocate space
-            delay until Clock + Milliseconds(100);
+            delay until Clock + Milliseconds(200);
 
             --send the rest
             S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(Len_To_Read + 7)));
 
-            delay until Clock + Milliseconds(100);
+            delay until Clock + Milliseconds(200);
 
             Bytes_Sent := Bytes_Sent + Len_To_Read;
             Bytes_Remaining := File_Size - Bytes_Sent;
