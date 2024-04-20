@@ -8,6 +8,7 @@ with Ada.Direct_IO;
 with Ada.IO_Exceptions; use Ada.IO_Exceptions;
 with Interfaces; use Interfaces;
 with erase_program;
+with verify_program;
 
 package body flash_program is
 package IO renames Ada.Text_IO;
@@ -99,7 +100,7 @@ package Serial renames GNAT.Serial_Communications;
 
     begin
         -- default mode
-        IO.Put_Line("Reading file to flash");
+        IO.Put_Line("Reading file...");
 
         --Opens the port we will communicate over and then set the specifications of the port
         S_Port.Open(Com_Port);
@@ -107,7 +108,7 @@ package Serial renames GNAT.Serial_Communications;
 
         Ada.Streams.Stream_IO.Open(I_File, Ada.Streams.Stream_IO.In_File, File_Path);
 
-        IO.Put_Line(Ada.Characters.Latin_1.LF & "Reading complete.");
+        IO.Put_Line("Reading complete." & Ada.Characters.Latin_1.LF);
 
         File_Size := Integer(Ada.Streams.Stream_IO.Size(I_File));
 
@@ -152,18 +153,16 @@ package Serial renames GNAT.Serial_Communications;
 
             O_Buffer(7) := Ada.Streams.Stream_Element(Len_To_Read);
 
-            delay until Clock + Milliseconds(300);
-
             --send the size of the packet first before the rest of the packet
             S_Port.Write(O_Buffer(1..1));
 
             --delay so the board can allocate space
-            delay until Clock + Milliseconds(200);
+            delay until Clock + Milliseconds(50);
 
             --send the rest
             S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(Len_To_Read + 7)));
 
-            delay until Clock + Milliseconds(200);
+            delay until Clock + Milliseconds(50);
 
             Bytes_Sent := Bytes_Sent + Len_To_Read;
             Bytes_Remaining := File_Size - Bytes_Sent;
@@ -180,6 +179,7 @@ package Serial renames GNAT.Serial_Communications;
             end if;
             Percentage_Complete := Float(1) - (Float(Bytes_Remaining)/Float(File_Size));
             utilities_cli.Progress_Bar(Percentage_Complete);
+            delay until Clock + Milliseconds(200);
         end loop;
         Ada.Streams.Stream_IO.Close(I_File);
 
@@ -188,11 +188,13 @@ package Serial renames GNAT.Serial_Communications;
         --  end loop;
         if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(1))) = 1 then
             IO.Put_Line ("Flashing succeeded.");
+            verify_program.verify(file, address);
         else
             IO.Put_Line ("Flashing failed.");
         end if;
 
-        S_Port.Close;
+        S_Port.Close;  
+
     -- file not found
     exception
         when Ada.IO_Exceptions.Name_Error =>

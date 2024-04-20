@@ -99,7 +99,7 @@ package Serial renames GNAT.Serial_Communications;
 
     begin
         -- default mode
-        IO.Put_Line("Reading file to verify");
+        --  IO.Put_Line("Reading file to verify");
 
         --Opens the port we will communicate over and then set the specifications of the port
         S_Port.Open(Com_Port);
@@ -107,7 +107,7 @@ package Serial renames GNAT.Serial_Communications;
 
         Ada.Streams.Stream_IO.Open(I_File, Ada.Streams.Stream_IO.In_File, File_Path);
 
-        IO.Put_Line(Ada.Characters.Latin_1.LF & "Reading complete.");
+        --  IO.Put_Line("Reading complete." & Ada.Characters.Latin_1.LF);
 
         File_Size := Integer(Ada.Streams.Stream_IO.Size(I_File));
 
@@ -140,7 +140,7 @@ package Serial renames GNAT.Serial_Communications;
             O_Buffer(7) := Ada.Streams.Stream_Element(Len_To_Read);
 
             --send the size of the packet first before the rest of the packet
-            delay until Clock + Milliseconds(350);
+            
             S_Port.Write(O_Buffer(1..1));
 
             --delay so the board can allocate space
@@ -149,13 +149,13 @@ package Serial renames GNAT.Serial_Communications;
             --send the rest
             S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(O_Size)));
 
-            delay until Clock + Milliseconds(10);
+            delay until Clock + Milliseconds(50);
 
             Bytes_Sent := Bytes_Sent + Len_To_Read;
             Bytes_Remaining := File_Size - Bytes_Sent;
             Base_Mem_Address := Base_Mem_Address + Len_To_Read;
 
-            delay until Clock + Milliseconds(200);
+            delay until Clock + Milliseconds(50);
             S_Port.Read(I_Buffer, I_Offset);
             
             if Integer(I_Buffer(I_Offset)) /= 1 then 
@@ -178,6 +178,7 @@ package Serial renames GNAT.Serial_Communications;
 
             Percentage_Complete := Float(1) - (Float(Bytes_Remaining)/Float(File_Size));
             utilities_cli.Progress_Bar(Percentage_Complete);
+            delay until Clock + Milliseconds(200);
         end loop;
         Ada.Streams.Stream_IO.Close(I_File);
 

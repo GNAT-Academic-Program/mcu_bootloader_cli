@@ -115,7 +115,8 @@ package body help_page is
 
         -- version history
         Put_line(Ada.Characters.Latin_1.LF & utilities_cli.bold & "VERSION HISTORY" & utilities_cli.unbold);
-        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 4/16/2024");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1a" & utilities_cli.unbold & " - 4/10/2024 - flash implementation");
+        Put_Line(utilities_cli.bold & Ada.Characters.Latin_1.HT & "0.1b" & utilities_cli.unbold & " - 4/19/2024 - adding of erase and verify");
 
         -- quit command
         Put_Line(Ada.Characters.Latin_1.LF & "Press " & utilities_cli.bold & "Esc" & utilities_cli.unbold &  " to exit the help page");

@@ -30,11 +30,10 @@ package Serial renames GNAT.Serial_Communications;
 
         --set the packet to send the command code
         O_Buffer(2) := Ada.Streams.Stream_Element(info_number);
-        delay until Clock + Milliseconds(200);
 
         S_Port.Write(O_Buffer);
 
-        delay until Clock + Milliseconds(200);
+        delay until Clock + Milliseconds(300);
 
         while Integer(I_Offset) < 5 loop
             S_Port.Read(I_Buffer, I_Offset);
