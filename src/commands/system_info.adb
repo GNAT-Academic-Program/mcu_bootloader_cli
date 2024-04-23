@@ -17,7 +17,7 @@ package Serial renames GNAT.Serial_Communications;
 
       S_Port : aliased Serial.Serial_Port;
 
-      Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+      Com_Port : Serial.Port_Name := Autodetect_Port;
 
       Device_ID_Arr : byteArr;
       Revision_ID_Arr : byteArr;

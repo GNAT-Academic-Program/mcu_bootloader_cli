@@ -31,7 +31,7 @@ package body reset_board is
 
       S_Port : aliased Serial.Serial_Port;
 
-      Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+      Com_Port : Serial.Port_Name := Autodetect_Port;
    begin
       IO.Put_Line(LF & "Resetting...");
 
