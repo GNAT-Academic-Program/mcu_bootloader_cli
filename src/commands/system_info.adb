@@ -1,4 +1,5 @@
 with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
+with Connect_Board; use Connect_Board;
 
 package body system_info is
 package IO renames Ada.Text_IO;
@@ -25,8 +26,10 @@ package Serial renames GNAT.Serial_Communications;
       Revision_ID : String (1..4);
    begin
       --Opens the port we will communicate over and then set the specifications of the port
-      S_Port.Open(Com_Port);
-      S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
+      if not Connect(S_Port, Com_Port) then
+         return;
+      end if;
+
       --  clear buffer
       I_Offset := 0;
       S_Port.Read (Clear_Buffer, I_Offset);
@@ -73,7 +76,7 @@ package Serial renames GNAT.Serial_Communications;
       S_Port.Read (Clear_Buffer, I_Offset);
       I_Offset := 0;
 
-      S_Port.Close;
+      Disconnect(S_Port);
     
    end board_info;
  
