@@ -85,7 +85,7 @@ package Serial renames GNAT.Serial_Communications;
 
       S_Port : aliased Serial.Serial_Port;
 
-      Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+      Com_Port : Serial.Port_Name := Autodetect_Port;
       Bytes_Remaining : Integer := 0;
       Bytes_Sent : Integer := 0;
       File_Size : Integer := 0;

@@ -71,7 +71,7 @@ package body erase_program is
 
       S_Port : aliased Serial.Serial_Port;
 
-      Com_Port : Serial.Port_Name := "/dev/ttyACM0";
+      Com_Port : Serial.Port_Name := Autodetect_Port;
 
       --Address we will start writing to on the board should be a parameter in the future
       Sector_Num_Start : Integer := sector_start_selection;
