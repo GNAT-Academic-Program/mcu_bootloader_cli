@@ -26,9 +26,11 @@ package Serial renames GNAT.Serial_Communications;
       Revision_ID : String (1..4);
    begin
       --Opens the port we will communicate over and then set the specifications of the port
-      if not Connect(S_Port, Com_Port) then
-         return;
-      end if;
+      --  if not Connect(S_Port, Com_Port) then
+      --     return;
+      --  end if;
+      S_Port.Open(Com_Port);
+      S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
       --  clear buffer
       I_Offset := 0;
@@ -76,7 +78,8 @@ package Serial renames GNAT.Serial_Communications;
       S_Port.Read (Clear_Buffer, I_Offset);
       I_Offset := 0;
 
-      Disconnect(S_Port);
+      --  Disconnect(S_Port);
+      S_Port.Close;
     
    end board_info;
  
