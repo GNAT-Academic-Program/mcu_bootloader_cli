@@ -155,10 +155,6 @@ package Serial renames GNAT.Serial_Communications;
          --  Sets the number of bytes to send to the board in this packet
          --  The second byte of the packet is the command code
 
-         --  -- send ack
-         --  O_Buffer(1) := Ada.Streams.Stream_Element (1);
-         --  S_Port.Write(O_Buffer(1..1));
-
          O_Buffer (2) := Ada.Streams.Stream_Element (flash_number);
 
          if Bytes_Remaining > File_Chunk then
@@ -181,22 +177,14 @@ package Serial renames GNAT.Serial_Communications;
          for j in 1 .. 4 loop
                O_Buffer (Ada.Streams.Stream_Element_Offset (j+2))
                         := Ada.Streams.Stream_Element (Address_Array (j));
-
          end loop;
 
          O_Buffer (7) := Ada.Streams.Stream_Element (Len_To_Read);
-
-         --  wait for bootloader ack for connection
-         --  I_Offset := 0;
-         --  while I_Offset < 1 loop
-         --        S_Port.Read (I_Buffer, I_Offset);
-         --  end loop;
 
          --  send the size of the packet first before the rest of the packet
          S_Port.Write (O_Buffer (1 .. 1));
 
          --  delay so the board can allocate space
-         --  delay until Clock + Milliseconds (50);
 
          I_Offset := 0;
          while I_Offset < 1 loop
@@ -207,9 +195,6 @@ package Serial renames GNAT.Serial_Communications;
          --  check for successful acknowledgment
          if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
                      /= 1 then 
-               IO.Put_Line ("Exit ack");
-               IO.Put_Line (I_Buffer (Ada.Streams.Stream_Element_Offset (1))'Image);
-               IO.Put_Line (I_Offset'Image);
                exit;
          end if;
          Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
@@ -218,13 +203,10 @@ package Serial renames GNAT.Serial_Communications;
          S_Port.Write (O_Buffer
                (2 .. Ada.Streams.Stream_Element_Offset (Len_To_Read + 7)));
 
-         --  delay until Clock + Milliseconds (50);
-
          Bytes_Sent := Bytes_Sent + Len_To_Read;
          Bytes_Remaining := File_Size - Bytes_Sent;
          Base_Mem_Address := Base_Mem_Address + Len_To_Read;
-         
-         --  counter1 := counter1 + 1;
+
          I_Offset := 0;
          while I_Offset < 1 loop
                S_Port.Read (Status_Buffer, I_Offset);
@@ -232,19 +214,14 @@ package Serial renames GNAT.Serial_Communications;
 
          if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
                      /= 1 then
-               IO.Put ("Exit ack2 or failed op");
                exit;
          end if;
          Percentage_Complete := Float (1) -
                               (Float (Bytes_Remaining) / Float (File_Size));
          utilities_cli.Progress_Bar (Percentage_Complete);
-         --delay until Clock + Milliseconds (200);
       end loop;
       Ada.Streams.Stream_IO.Close (I_File);
 
-      --  while Integer(I_Offset) < 1 loop
-      --      S_Port.Read(I_Buffer, I_Offset);
-      --  end loop;
       if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1))) = 1 then
          IO.Put_Line ("Flashing succeeded.");
          verify_program.verify (file, address);
