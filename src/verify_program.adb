@@ -63,6 +63,10 @@ package Serial renames GNAT.Serial_Communications;
         I_Size : Ada.Streams.Stream_Element_Offset := 255;
         I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
         I_Offset : Ada.Streams.Stream_Element_Offset := 0;
+
+        Clear_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
+
+        Status_Buffer : Ada.Streams.Stream_Element_Array(1 .. 1);
         counter1 : Integer := 0;
 
         S_Port : aliased Serial.Serial_Port;
@@ -104,7 +108,10 @@ package Serial renames GNAT.Serial_Communications;
         --Opens the port we will communicate over and then set the specifications of the port
         S_Port.Open(Com_Port);
         S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
-
+        --  clear buffer
+        I_Offset := 0;
+        S_Port.Read (Clear_Buffer, I_Offset);
+        I_Offset := 0;
         Ada.Streams.Stream_IO.Open(I_File, Ada.Streams.Stream_IO.In_File, File_Path);
 
         --  IO.Put_Line("Reading complete." & Ada.Characters.Latin_1.LF);
@@ -121,6 +128,11 @@ package Serial renames GNAT.Serial_Communications;
         while Bytes_Remaining > 0 loop
             --Sets the number of bytes to send to the board in this packet
             --The second byte of the packet is the command code
+
+            --  send ack
+            --  O_Buffer(1) := Ada.Streams.Stream_Element (1);
+            --  S_Port.Write(O_Buffer(1..1));
+
             O_Buffer(2) := Ada.Streams.Stream_Element(verify_number);
 
             if Bytes_Remaining > File_Chunk then
@@ -139,12 +151,31 @@ package Serial renames GNAT.Serial_Communications;
 
             O_Buffer(7) := Ada.Streams.Stream_Element(Len_To_Read);
 
+            --  wait for bootloader ack for connection
+            --  I_Offset := 0;
+            --  while I_Offset < 1 loop
+            --      S_Port.Read (I_Buffer, I_Offset);
+            --  end loop;
+
             --send the size of the packet first before the rest of the packet
             
             S_Port.Write(O_Buffer(1..1));
 
+            I_Offset := 0;
+            while I_Offset < 1 loop
+                S_Port.Read (Status_Buffer, I_Offset);
+            end loop;
+
+            --  check for successful acknowledgment
+            if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
+                        /= 1 then 
+                exit;
+            end if;
+
+            Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
+
             --delay so the board can allocate space
-            delay until Clock + Milliseconds(100);
+            --  delay until Clock + Milliseconds(100);
 
             --send the rest
             S_Port.Write(O_Buffer(2..Ada.Streams.Stream_Element_Offset(O_Size)));
@@ -155,7 +186,7 @@ package Serial renames GNAT.Serial_Communications;
             Bytes_Remaining := File_Size - Bytes_Sent;
             Base_Mem_Address := Base_Mem_Address + Len_To_Read;
 
-            delay until Clock + Milliseconds(50);
+            --  delay until Clock + Milliseconds(50);
             S_Port.Read(I_Buffer, I_Offset);
             
             if Integer(I_Buffer(I_Offset)) /= 1 then 
@@ -178,7 +209,7 @@ package Serial renames GNAT.Serial_Communications;
 
             Percentage_Complete := Float(1) - (Float(Bytes_Remaining)/Float(File_Size));
             utilities_cli.Progress_Bar(Percentage_Complete);
-            delay until Clock + Milliseconds(200);
+            --  delay until Clock + Milliseconds(200);
         end loop;
         Ada.Streams.Stream_IO.Close(I_File);
 
@@ -186,10 +217,15 @@ package Serial renames GNAT.Serial_Communications;
         --      S_Port.Read(I_Buffer, I_Offset);
         --  end loop;
         if Match = False then
-            IO.Put_Line ("Verification failed.");
+            IO.Put_Line (LF & "Verification failed.");
         else
             IO.Put_Line ("Verification succeeded.");
         end if;
+
+        --  clear buffer
+        I_Offset := 0;
+        S_Port.Read (Clear_Buffer, I_Offset);
+        I_Offset := 0;
 
         S_Port.Close;
     -- file not found
