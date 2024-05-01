@@ -118,16 +118,10 @@ package Serial renames GNAT.Serial_Communications;
       --  default mode
       IO.Put_Line (LF & "Reading file...");
 
-      --  Opens the port we will communicate over and then 
-      --  set the specifications of the port
+      --  Opens the port to communicate over, setting the serial parameters
       S_Port.Open (Com_Port);
       S_Port.Set (Rate => Serial.B115200,
                   Block => False, Timeout => 1000.0);
-
-      --  clear buffer
-      I_Offset := 0;
-      S_Port.Read (Clear_Buffer, I_Offset);
-      I_Offset := 0;
 
       Ada.Streams.Stream_IO.Open (I_File,
                                  Ada.Streams.Stream_IO.In_File,

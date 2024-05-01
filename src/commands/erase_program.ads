@@ -11,11 +11,19 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package erase_program is
    package AC renames Ada.Containers;
-   package param_map is new AC.Indefinite_Hashed_Maps (Element_Type => String, Key_Type => String, Hash => Ada.Strings.Hash_Case_Insensitive, Equivalent_Keys => Ada.Strings.Equal_Case_Insensitive);
+   package param_map is new AC.Indefinite_Hashed_Maps (
+      Element_Type => String,
+      Key_Type => String,
+      Hash => Ada.Strings.Hash_Case_Insensitive,
+      Equivalent_Keys => Ada.Strings.Equal_Case_Insensitive);
    function description return String;
    function parameters return param_map.Map;
-   procedure parse_sub_command (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector);
-   procedure default_erase_handler(sectorStart : in out Integer; sectorEnd : in out Integer);
-   procedure erase_handler(sectorStart : Integer; sectorEnd : Integer);
-   procedure erase(sectorStart : Integer; sectorEnd : Integer);
+   procedure parse_sub_command (
+      sub_cmd_list : utilities_cli.Subcommand_Vector.Vector);
+   procedure default_erase_handler (
+      sectorStart : in out Integer; sectorEnd : in out Integer);
+   procedure erase_handler (
+      sectorStart : Integer; sectorEnd : Integer);
+   procedure erase (
+      sectorStart : Integer; sectorEnd : Integer);
 end erase_program;

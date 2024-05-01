@@ -35,14 +35,10 @@ package body reset_board is
    begin
       IO.Put_Line(LF & "Resetting...");
 
-      --Opens the port we will communicate over and then set the specifications of the port
+      --  Opens the port to communicate over, setting the serial parameters
       S_Port.Open(Com_Port);
       S_Port.Set(Rate => Serial.B115200, Block => False, Timeout => 1000.0);
-      
-      --  clear buffer
-      I_Offset := 0;
-      S_Port.Read (Clear_Buffer, I_Offset);
-      I_Offset := 0;
+
       -- size of packet
       O_Buffer(1) := Ada.Streams.Stream_Element(O_Size);
 
