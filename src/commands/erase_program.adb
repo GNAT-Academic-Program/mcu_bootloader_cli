@@ -16,9 +16,9 @@ package body erase_program is
       if sub_cmd_list.Element (0) = "" then
          erase_handler (-1, -1);
       elsif sub_cmd_list.Length = 1 then
-         erase_handler (Integer'Value (To_String (sub_cmd_list.Element(0))), Integer'Value (To_String (sub_cmd_list.Element(0))));
+         erase_handler (Integer'Value (To_String (sub_cmd_list.Element (0))), Integer'Value (To_String (sub_cmd_list.Element (0))));
       elsif sub_cmd_list.Length = 2 then
-         erase_handler (Integer'Value (To_String (sub_cmd_list.Element(0))), Integer'Value (To_String (sub_cmd_list.Element(1))));
+         erase_handler (Integer'Value (To_String (sub_cmd_list.Element (0))), Integer'Value (To_String (sub_cmd_list.Element (1))));
       else
          IO.Put_Line ("Too many arguments for the erase command. Run " & utilities_cli.bold & "help erase" & utilities_cli.unbold & " for required arguments");
       end if;
@@ -45,7 +45,7 @@ package body erase_program is
       erase (sector_start_selection, sector_end_selection);
    end erase_handler;
 
-   procedure erase(sectorStart : Integer; sectorEnd : Integer) is 
+   procedure erase (sectorStart : Integer; sectorEnd : Integer) is 
       package Float_IO is new Ada.Direct_IO (Float);
       use Float_IO;
 
@@ -83,11 +83,16 @@ package body erase_program is
       S_Port.Open (Com_Port);
       S_Port.Set (Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
+      --  clear buffer
+      I_Offset := 0;
+      S_Port.Read (Clear_Buffer, I_Offset);
+      I_Offset := 0;
+
       IO.Put_Line ("Erasing...");
 
       --  --  send ack
-      --  O_Buffer(1) := Ada.Streams.Stream_Element (1);
-      --  S_Port.Write(O_Buffer(1..1));
+      --  O_Buffer (1) := Ada.Streams.Stream_Element (1);
+      --  S_Port.Write (O_Buffer (1..1));
       --  size of packet
       O_Buffer (1) := Ada.Streams.Stream_Element (O_Size);
 
@@ -113,8 +118,8 @@ package body erase_program is
       --        return;
       --  end if;
 
-      -- send the size of the packet first before the rest of the packet
-      S_Port.Write (O_Buffer(1..1));
+      --  send the size of the packet first before the rest of the packet
+      S_Port.Write (O_Buffer (1 .. 1));
 
       --  checks for acknowledgement
       I_Offset := 0;
@@ -124,22 +129,23 @@ package body erase_program is
 
       --  check for successful acknowledgment
       if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
-                  /= 1 then 
+                  /= 1
+      then
          return;
       end if;
       Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
 
-      -- delay so the board can allocate space
-      --  delay until Clock + Milliseconds(100);
+      --  --  delay so the board can allocate space
+      --  delay until Clock + Milliseconds (100);
 
-      -- send the rest
-      S_Port.Write (O_Buffer(2..4));
-      --  delay until Clock + Milliseconds(100);
+      --  send the rest
+      S_Port.Write (O_Buffer (2 .. 4));
+      --  delay until Clock + Milliseconds (100);
       I_Offset := 0;
       while Integer (I_Offset) < 1 loop
-         S_Port.Read(Status_Buffer, I_Offset);
+         S_Port.Read (Status_Buffer, I_Offset);
       end loop;
-      if Integer (Status_Buffer(Ada.Streams.Stream_Element_Offset(1)))= 1 then
+      if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))= 1 then
          IO.Put_Line ("Erasing succeeded.");
       else
          IO.Put_Line ("Erasing failed.");
@@ -148,14 +154,10 @@ package body erase_program is
       Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
 
       --  -- test
-      --  S_Port.Read(I_Buffer, I_Offset);
+      --  S_Port.Read (I_Buffer, I_Offset);
       --  for j in 1..4 loop
-      --      IO.Put (I_Buffer(Ada.Streams.Stream_Element_Offset(j))'Image);
+      --      IO.Put (I_Buffer (Ada.Streams.Stream_Element_Offset (j))'Image);
       --  end loop;
-      --  clear buffer
-      I_Offset := 0;
-      S_Port.Read (Clear_Buffer, I_Offset);
-      I_Offset := 0;
       --  close
       S_Port.Close;
    end erase;

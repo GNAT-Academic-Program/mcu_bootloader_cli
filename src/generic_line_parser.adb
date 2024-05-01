@@ -104,7 +104,7 @@ package body Generic_Line_Parser is
             raise Constraint_Error with "Option label '" & Buffer & "' has '='";
          end if;
 
-         if Buffer(Buffer'Last) = ',' then
+         if Buffer (Buffer'Last) = ',' then
             raise Constraint_Error
                with "Option label '" & Buffer & "' ends with ','";
          end if;
@@ -118,19 +118,19 @@ package body Generic_Line_Parser is
 
             if First = Comma_Pos then
                -- First should always point to the beginning of a
-               -- label, therefore it cannot be Buffer(First) = ','
+               -- label, therefore it cannot be Buffer (First) = ','
                raise Constraint_Error
                   with "Wrong syntax in Option label '" & Buffer & "'";
             end if;
 
             pragma Assert (Comma_Pos > First);
 
-            Result.Append (Trimmed_Name (Buffer(First .. Comma_Pos - 1)));
+            Result.Append (Trimmed_Name (Buffer (First .. Comma_Pos - 1)));
 
             First := Comma_Pos + 1;
 
-            -- It cannot be First > Buffer'Last since Buffer(Comma_Pos) = '='
-            -- and Buffer(Buffer'Last) /= ','
+            -- It cannot be First > Buffer'Last since Buffer (Comma_Pos) = '='
+            -- and Buffer (Buffer'Last) /= ','
             pragma Assert (First <= Buffer'Last);
          end loop;
 
@@ -155,7 +155,7 @@ package body Generic_Line_Parser is
             Name := Name_Lists.Element (Position);
             Name_Lists.Next (Position);
 
-            Case_Normalize(Name);
+            Case_Normalize (Name);
 
             if Name_Table.Contains (Name) then
                raise Constraint_Error
@@ -176,7 +176,7 @@ package body Generic_Line_Parser is
                         return Natural is
    begin
       if X = Null_Unbounded_String then
-         raise Bad_Command with "Invalid integer '" & To_S(X) & "'";
+         raise Bad_Command with "Invalid integer '" & To_S (X) & "'";
       end if;
 
       return Natural'Value (To_S (X));
@@ -190,7 +190,7 @@ package body Generic_Line_Parser is
                       return Float is
    begin
       if X = Null_Unbounded_String then
-         raise Bad_Command with "Invalid Float '" & To_S(X) & "'";
+         raise Bad_Command with "Invalid Float '" & To_S (X) & "'";
       end if;
 
       return Float'Value (To_S (X));
@@ -251,7 +251,7 @@ package body Generic_Line_Parser is
          begin
             Item.Iterate (Append'Access);
 
-            return To_String(Result);
+            return To_String (Result);
          end Join;
 
          use type Ada.Containers.Count_Type;
@@ -306,7 +306,7 @@ package body Generic_Line_Parser is
          Position  : Name_To_Index_Maps.Cursor;
 
          Reported  : array (Parameters'Range) of Boolean := (others => False);
-         --  Reported(Idx) is true if the parameter with index Idx has
+         --  Reported (Idx) is true if the parameter with index Idx has
          --  already processed as missing.  We need this since we loop over
          --  the option names and more than option can refer to the same
          --  parameter.
@@ -316,7 +316,7 @@ package body Generic_Line_Parser is
          while Position /= Name_To_Index_Maps.No_Element loop
             Param_Idx := Name_To_Index_Maps.Element (Position);
 
---              Ada.Text_IO.Put ("checking" & To_S(Parameters (Param_Idx).Name) & "->");
+--              Ada.Text_IO.Put ("checking" & To_S (Parameters (Param_Idx).Name) & "->");
 --              Ada.Text_IO.Put (Boolean'Image (Found (Param_Idx)));
 --              Ada.Text_IO.Put_Line (" "& Boolean'Image (Reported (Param_Idx)));
 

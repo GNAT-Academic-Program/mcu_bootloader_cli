@@ -32,6 +32,11 @@ package body system_info is
       S_Port.Open (Com_Port);
       S_Port.Set (Rate => Serial.B115200, Block => False, Timeout => 1000.0);
 
+      --  clear buffer
+      I_Offset := 0;
+      S_Port.Read (Clear_Buffer, I_Offset);
+      I_Offset := 0;
+
       O_Buffer (1) := Ada.Streams.Stream_Element (2);
 
       --  set the packet to send the command code
@@ -48,7 +53,7 @@ package body system_info is
       --  check for successful acknowledgment
       if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1))) /= 1
       then
-         IO.Put_Line ("Failed connection.");
+         IO.Put_Line ("Failed connection. (Try resetting board)");
          return;
       end if;
       Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
@@ -93,12 +98,7 @@ package body system_info is
 
       Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
 
-      --  clear buffer
-      I_Offset := 0;
-      S_Port.Read (Clear_Buffer, I_Offset);
-      I_Offset := 0;
-
-      --  Disconnect(S_Port);
+      --  Disconnect (S_Port);
       S_Port.Close;
 
    end board_info;
@@ -111,7 +111,7 @@ package body system_info is
    function parameters return param_map.Map is
       params : param_map.Map;
    begin
-      --  params.Insert("NULL", "");
+      --  params.Insert ("NULL", "");
 
       return params;
    end parameters;

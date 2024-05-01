@@ -33,7 +33,7 @@ package utilities_cli is
    redforeground : constant String := Ada.Characters.Latin_1.ESC & "[31m";
    greenforeground : constant String := Ada.Characters.Latin_1.ESC & "[32m";
    
-   package Subcommand_Vector is new Ada.Containers.Vectors(Index_Type => Natural, Element_Type => Unbounded_String);
+   package Subcommand_Vector is new Ada.Containers.Vectors (Index_Type => Natural, Element_Type => Unbounded_String);
 
    procedure Split_Unbounded_String (Input : Unbounded_String;
                                     Delimiter : Character_Set;
@@ -46,7 +46,7 @@ package utilities_cli is
 
    procedure To_Hex (Value : UInt12; Hex_String : in out String);
 
-   function HexToInteger(Hex_String : String) return Integer;
+   function HexToInteger (Hex_String : String) return Integer;
 
    function To_Hex_Digit (Value : UInt4) return Character;
 
@@ -58,11 +58,11 @@ package utilities_cli is
 
    function Addr_To_Bytes (Val : Unsigned_32) return addrArr;
 
-   procedure Sector_to_Addresses(sector : Integer; start_address : out Integer; end_address : out Integer);
+   procedure Sector_to_Addresses (sector : Integer; start_address : out Integer; end_address : out Integer);
 
-   function Addresses_to_Sector(address : Integer) return Integer;
+   function Addresses_to_Sector (address : Integer) return Integer;
 
-   procedure Progress_Bar(Pct_Completed : Float);
+   procedure Progress_Bar (Pct_Completed : Float);
 
    function Autodetect_Port return Serial.Port_Name;
 

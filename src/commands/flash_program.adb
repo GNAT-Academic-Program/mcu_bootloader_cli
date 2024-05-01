@@ -12,8 +12,8 @@ with verify_program;
 with reset_board;
 
 package body flash_program is
-package IO renames Ada.Text_IO;
-package Serial renames GNAT.Serial_Communications;
+   package IO renames Ada.Text_IO;
+   package Serial renames GNAT.Serial_Communications;
 
    procedure parse_sub_command
       (sub_cmd_list : utilities_cli.Subcommand_Vector.Vector) is
@@ -61,7 +61,7 @@ package Serial renames GNAT.Serial_Communications;
       flash (file_string, address_string);
    end flash_handler;
 
-   procedure flash (file : Unbounded_String; address : Unbounded_String) is 
+   procedure flash (file : Unbounded_String; address : Unbounded_String) is
       address_string : String := To_String (address);
       file_string : String := To_String (file);
 
@@ -79,7 +79,7 @@ package Serial renames GNAT.Serial_Communications;
       I_Size : Ada.Streams.Stream_Element_Offset := 1;
       I_Buffer : Ada.Streams.Stream_Element_Array (1 .. I_Size);
       I_Offset : Ada.Streams.Stream_Element_Offset := 0;
-      Status_Buffer: Ada.Streams.Stream_Element_Array (1 .. 1);
+      Status_Buffer : Ada.Streams.Stream_Element_Array (1 .. 1);
       Clear_Buffer : Ada.Streams.Stream_Element_Array (1 .. I_Size);
       counter1 : Integer := 0;
 
@@ -123,6 +123,11 @@ package Serial renames GNAT.Serial_Communications;
       S_Port.Set (Rate => Serial.B115200,
                   Block => False, Timeout => 1000.0);
 
+      --  clear buffer
+      I_Offset := 0;
+      S_Port.Read (Clear_Buffer, I_Offset);
+      I_Offset := 0;
+
       Ada.Streams.Stream_IO.Open (I_File,
                                  Ada.Streams.Stream_IO.In_File,
                                  File_Path);
@@ -159,17 +164,17 @@ package Serial renames GNAT.Serial_Communications;
 
          O_Buffer (1) := Ada.Streams.Stream_Element (Len_To_Read + 7);
 
-         for i in 1 ..Len_To_Read loop
+         for i in 1 .. Len_To_Read loop
                Ada.Streams.Stream_Element'Read (I_Stream, Cur_Read);
                O_Buffer (Ada.Streams.Stream_Element_Offset (7 + i))
                         := Cur_Read;
          end loop;
 
-         --  takes the memory address we 
-         --  will flash to and puts it in the packet
+         --  takes the memory address we will flash to
+         --    and puts it in the packet
          Address_Array := Addr_To_Bytes (Unsigned_32 (Base_Mem_Address));
          for j in 1 .. 4 loop
-               O_Buffer (Ada.Streams.Stream_Element_Offset (j+2))
+               O_Buffer (Ada.Streams.Stream_Element_Offset (j + 2))
                         := Ada.Streams.Stream_Element (Address_Array (j));
          end loop;
 
@@ -188,8 +193,9 @@ package Serial renames GNAT.Serial_Communications;
 
          --  check for successful acknowledgment
          if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
-                     /= 1 then 
-               exit;
+                     /= 1
+         then
+            exit;
          end if;
          Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
 
@@ -207,8 +213,9 @@ package Serial renames GNAT.Serial_Communications;
          end loop;
 
          if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
-                     /= 1 then
-               exit;
+                     /= 1
+         then
+            exit;
          end if;
          Percentage_Complete := Float (1) -
                               (Float (Bytes_Remaining) / Float (File_Size));
@@ -216,7 +223,8 @@ package Serial renames GNAT.Serial_Communications;
       end loop;
       Ada.Streams.Stream_IO.Close (I_File);
 
-      if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1))) = 1 then
+      if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1))) = 1
+      then
          IO.Put_Line ("Flashing succeeded.");
          verify_program.verify (file, address);
       else
@@ -224,30 +232,25 @@ package Serial renames GNAT.Serial_Communications;
          erase_program.erase (Begin_Sector, End_Sector);
       end if;
       Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
+
       --  reset board after flash
-      --  clear buffer
-      I_Offset := 0;
-      S_Port.Read (Clear_Buffer, I_Offset);
-      I_Offset := 0;
-
       reset_board.reset;
-      S_Port.Close;  
+      S_Port.Close;
 
-   -- file not found
+   --  file not found
    exception
       when Ada.IO_Exceptions.Name_Error =>
          Ada.Text_IO.Put_Line ("File not found or cannot be opened.");
    end flash;
 
-
    function description return String is
    begin
       return "The flash command take a binary file and memory address" &
             "from the host and loads that file into that memory" &
-            "address and the subsequent addresses into "&
+            "address and the subsequent addresses into " &
             "the internal flash memory.";
    end description;
-   -- indefinite array instead of containers
+   --  indefinite array instead of containers
    function parameters return param_map.Map is
       params : param_map.Map;
    begin

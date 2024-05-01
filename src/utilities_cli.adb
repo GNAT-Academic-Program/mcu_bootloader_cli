@@ -19,7 +19,7 @@ package body utilities_cli is
 
       if Deliminter_Index_First = 0 then
          Command := Input;
-         Remainder := To_Unbounded_String("");
+         Remainder := To_Unbounded_String ("");
       else
          Command := Unbounded_Slice (Input, 1, Deliminter_Index_First-1);
 
@@ -37,13 +37,13 @@ package body utilities_cli is
       Remainder : Unbounded_String;
       Delimiter : Character_Set := To_Set (' ');
    begin
-      utilities_cli.Split_Unbounded_String(inputcommands, Delimiter, Command, Remainder);
-      subcommand_list.Append(Command);
+      utilities_cli.Split_Unbounded_String (inputcommands, Delimiter, Command, Remainder);
+      subcommand_list.Append (Command);
       inputcommands := Remainder;
 
-      while Length(Remainder) > 0 loop
-         utilities_cli.Split_Unbounded_String(inputcommands, Delimiter, Command, Remainder);
-         subcommand_list.Append(Command);
+      while Length (Remainder) > 0 loop
+         utilities_cli.Split_Unbounded_String (inputcommands, Delimiter, Command, Remainder);
+         subcommand_list.Append (Command);
          inputcommands := Remainder;
       end loop;
       -- test
@@ -67,7 +67,7 @@ package body utilities_cli is
 
    end Clear_Screen;
 
-   function HexToInteger(Hex_String : String) return Integer is
+   function HexToInteger (Hex_String : String) return Integer is
    Result : Integer := 0;
    Digit : Character;
    Digit_Value : Integer;
@@ -76,12 +76,12 @@ package body utilities_cli is
 
    begin
       for I in Hex_String'Range loop
-         Digit := Hex_String(I);
+         Digit := Hex_String (I);
 
          case Digit is
-            when '0'..'9' => Digit_Value := Character'Pos(Digit) - Character'Pos('0');
-            when 'A'..'F' => Digit_Value := Character'Pos(Digit) - Character'Pos('A') + 10;
-            when 'a'..'f' => Digit_Value := Character'Pos(Digit) - Character'Pos('a') + 10;
+            when '0'..'9' => Digit_Value := Character'Pos (Digit) - Character'Pos ('0');
+            when 'A'..'F' => Digit_Value := Character'Pos (Digit) - Character'Pos ('A') + 10;
+            when 'a'..'f' => Digit_Value := Character'Pos (Digit) - Character'Pos ('a') + 10;
             when others   => raise InvalidHexCharacter;
          end case;
          Result := (Result * 16) + Digit_Value;
@@ -91,7 +91,7 @@ package body utilities_cli is
 
    exception
       when InvalidHexCharacter =>
-         Put_Line("Error: Invalid hexadecimal character detected.");
+         Put_Line ("Error: Invalid hexadecimal character detected.");
          return 0;
 
    end HexToInteger;
@@ -146,7 +146,7 @@ package body utilities_cli is
    function To_UInt12 (Val : byteArr) return UInt12 is
       Combined : UInt12;
    begin
-      Combined := UInt12(Val(1)) * 256 + UInt12(Val(2));
+      Combined := UInt12 (Val (1)) * 256 + UInt12 (Val (2));
 
       return Combined;
    end To_UInt12;
@@ -154,7 +154,7 @@ package body utilities_cli is
    function To_UInt16 (Val : byteArr) return UInt16 is
       Combined : UInt16;
    begin
-      Combined := UInt16(Val(1))*256 + UInt16(Val(2));
+      Combined := UInt16 (Val (1))*256 + UInt16 (Val (2));
 
       return Combined;
    end To_UInt16;
@@ -163,15 +163,15 @@ package body utilities_cli is
    function Addr_To_Bytes (Val : Unsigned_32) return addrArr is
       Sol : addrArr;
    begin
-      Sol(1) := UInt8(Val / 16#1000000#);
-      Sol(2) := UInt8((Val / 16#10000#) and 16#FF#);
-      Sol(3) := UInt8((Val / 16#100#) and 16#FF#);
-      Sol(4) := UInt8(Val and 16#FF#);
+      Sol (1) := UInt8 (Val / 16#1000000#);
+      Sol (2) := UInt8 ( (Val / 16#10000#) and 16#FF#);
+      Sol (3) := UInt8 ( (Val / 16#100#) and 16#FF#);
+      Sol (4) := UInt8 (Val and 16#FF#);
 
       return Sol;
    end Addr_To_Bytes;
 
-   procedure Sector_to_Addresses(sector : Integer; start_address : out Integer; end_address : out Integer) is
+   procedure Sector_to_Addresses (sector : Integer; start_address : out Integer; end_address : out Integer) is
    begin
    -- STM32F756xx and STM32F74xxx Flash Memory Organization
    if sector = 0 then
@@ -201,7 +201,7 @@ package body utilities_cli is
    end if;
    end Sector_to_Addresses;
 
-   function Addresses_to_Sector(address : Integer) return Integer is
+   function Addresses_to_Sector (address : Integer) return Integer is
       sector : Integer;
    begin
    -- STM32F756xx and STM32F74xxx Flash Memory Organization
@@ -225,29 +225,29 @@ package body utilities_cli is
    return sector;
    end Addresses_to_Sector;
 
-   procedure Progress_Bar(Pct_Completed : Float) is
+   procedure Progress_Bar (Pct_Completed : Float) is
       Progress_Char : constant Character := '-';
       Bar_Width : constant := 50;
 
       -- Procedure to print progress bar
-      procedure Print_Progress_Bar(Percentage : Float) is
+      procedure Print_Progress_Bar (Percentage : Float) is
       begin
-         Put("[");
+         Put ("[");
          for I in 1 .. Bar_Width loop
-            if Float(I) / Float(Bar_Width) <= Percentage then
-               Put(Progress_Char);
+            if Float (I) / Float (Bar_Width) <= Percentage then
+               Put (Progress_Char);
             else
-               Put(' ');
+               Put (' ');
             end if;
          end loop;
-         Put("] " & Integer(Percentage * Float(100))'Image & "%" & Ada.Characters.Latin_1.CR);
+         Put ("] " & Integer (Percentage * Float (100))'Image & "%" & Ada.Characters.Latin_1.CR);
          if Percentage = 1.0 then 
-            Put(Ada.Characters.Latin_1.LF);
+            Put (Ada.Characters.Latin_1.LF);
          end if;
       end Print_Progress_Bar;
 
    begin
-      Print_Progress_Bar(Pct_Completed);
+      Print_Progress_Bar (Pct_Completed);
    end Progress_Bar;
 
    function Autodetect_Port return Serial.Port_Name is
@@ -266,7 +266,7 @@ package body utilities_cli is
             else
                Get_Next_Entry (Dir_Search, Ser_File);
                End_Search (Dir_Search);
-               Put_Line("Using serial port " & Full_Name (Ser_File));
+               Put_Line ("Using serial port " & Full_Name (Ser_File));
                return Serial.Port_Name (Full_Name (Ser_File));
             end if;
          exception
@@ -275,7 +275,7 @@ package body utilities_cli is
             --  cach the exception for the file path
             when E : Ada.Directories.Name_Error =>
                declare
-                  Message : Unbounded_String := To_Unbounded_String(Exception_Message (E));
+                  Message : Unbounded_String := To_Unbounded_String (Exception_Message (E));
                   Ser_Path : Unbounded_String;
                begin
                   -- Get file path out from between quotes
