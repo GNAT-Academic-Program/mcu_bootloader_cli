@@ -7,13 +7,13 @@ package Serial renames GNAT.Serial_Communications;
 
    procedure board_info is 
       O_Size : Ada.Streams.Stream_Element_Offset := 2;
-      O_Buffer : Ada.Streams.Stream_Element_Array (1..O_Size);
+      O_Buffer : Ada.Streams.Stream_Element_Array (1 .. O_Size);
 
-      I_Size : Ada.Streams.Stream_Element_Offset := 5;
-      I_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
+      I_Size : Ada.Streams.Stream_Element_Offset := 4;
+      I_Buffer : Ada.Streams.Stream_Element_Array (1 .. I_Size);
       I_Offset : Ada.Streams.Stream_Element_Offset := 0;
-      Clear_Buffer : Ada.Streams.Stream_Element_Array(1..I_Size);
-      Status_Buffer : Ada.Streams.Stream_Element_Array(1..1);
+      Clear_Buffer : Ada.Streams.Stream_Element_Array (1 .. 1);
+      Status_Buffer : Ada.Streams.Stream_Element_Array (1 .. 1);
 
       S_Port : aliased Serial.Serial_Port;
 
@@ -50,13 +50,21 @@ package Serial renames GNAT.Serial_Communications;
          S_Port.Read (Status_Buffer, I_Offset);
       end loop;
 
+      --  check for successful acknowledgment
+      if Integer (Status_Buffer (Ada.Streams.Stream_Element_Offset (1)))
+                  /= 1 then 
+         IO.Put_Line ("Failed connection.");         
+         return;
+      end if;
+      Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
+
       S_Port.Write(O_Buffer(2 .. 2));
       I_Offset := 0;
-      while Integer(I_Offset) < 5 loop
+      while Integer(I_Offset) < 4 loop
          S_Port.Read(I_Buffer, I_Offset);
       end loop;
 
-      if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(5))) = 0 then
+      if Integer(I_Buffer(Ada.Streams.Stream_Element_Offset(4))) = 0 then
          IO.Put_Line ("Info data not received from board.");
       else
          for i in  1..2 loop
@@ -71,7 +79,21 @@ package Serial renames GNAT.Serial_Communications;
          IO.Put_Line(Ada.Characters.Latin_1.LF & "Device ID: 0x" & Device_ID);
          IO.Put_Line("Revision ID: 0x" & Revision_ID);
          IO.Put_Line("Version: 0.1.0-alpha");
+         IO.Put_Line("");
       end if;
+
+      -- check status
+      I_Offset := 0;
+      while Integer(I_Offset) < 1 loop
+         S_Port.Read(Status_Buffer, I_Offset);
+      end loop;
+      if Integer(Status_Buffer(Ada.Streams.Stream_Element_Offset(1)))= 1 then
+         IO.Put_Line ("Info succeeded.");
+      else
+         IO.Put_Line ("Info failed.");
+      end if;
+
+      Status_Buffer (Ada.Streams.Stream_Element_Offset (1)) := 0;
 
       --  clear buffer
       I_Offset := 0;
